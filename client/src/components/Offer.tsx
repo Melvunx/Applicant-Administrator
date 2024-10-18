@@ -6,16 +6,20 @@ const Offer = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:4000").then((res) => setData(res.data));
+    axios
+      .get(import.meta.env.VITE_OFFER_URL)
+      .then((res) => setData(res.data || []));
   }, []);
 
   return (
     <div>
       <h1>Offers</h1>
       <ul>
-        {data.map((offer, index) => (
-          <Card key={index} offer={offer} />
-        ))}
+        {data.length === 0 ? (
+          <p>Aucune offre trouvée</p>
+        ) : (
+          data.map((offer, index) => <Card key={index} offer={offer} />)
+        )}
       </ul>
     </div>
   );

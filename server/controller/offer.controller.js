@@ -11,18 +11,19 @@ module.exports.getOffers = async (req, res) => {
 };
 
 module.exports.addOffer = async (req, res) => {
-  const newOffer = offerModel({
-    title: req.body.title,
-    company: req.body.company,
-    url: req.body.url,
-    applyDate: req.body.applyDate,
-    status: req.body.status,
-  });
-
+  const { title, company, url, applyDate, status } = req.body;
   try {
+    const newOffer = new Offer({
+      title,
+      company,
+      url,
+      applyDate,
+      status,
+    });
     const savedOffer = await newOffer.save();
-    return res.status(201).json(savedOffer);
-  } catch (err) {
-    return res.status(400).json({ message: err.message });
+    console.log("Nouvelle offre ajoutée : " + savedOffer);
+    res.status(201).json(savedOffer);
+  } catch (error) {
+    res.status(500).json({ error: "Erreur lors de l'ajout de l'offre" });
   }
 };

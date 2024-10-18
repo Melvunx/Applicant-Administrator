@@ -9,7 +9,7 @@ require("./config/database");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/", require("./routes/applicant.routes"));
+app.use("/api", require("./routes/applicant.routes"));
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is listening on http://localhost:${process.env.PORT} !`);
