@@ -1,10 +1,12 @@
 import Navbar from "@/components/Navbar";
+import Offer from "@/components/Offer";
 
 const Home = () => {
   return (
     <div>
       <Navbar />
-      <h1 className="font-bold text-center">Page home</h1>
+      <h1 className="text-center font-bold">Page home</h1>
+      <Offer />
     </div>
   );
 };

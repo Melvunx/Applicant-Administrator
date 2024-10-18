@@ -3,6 +3,7 @@ const offerModel = require("../models/offer.models");
 module.exports.getOffers = async (req, res) => {
   try {
     const offers = await offerModel.find().sort({ createdAt: -1 });
+    console.log("Toutes les offres : " + offers);
     return res.status(200).send(offers);
   } catch (err) {
     return res.status(400).json({ message: "Error to get data: " + err });
