@@ -2,13 +2,13 @@ const router = require("express").Router();
 const {
   getOffers,
   addOffer,
-  archiveOffer,
+  toggleArchiveOffer,
   deleteOffer,
 } = require("../controller/offer.controller");
 
 router.get("/offers", getOffers);
 router.post("/addOffer", addOffer);
-router.delete("/offers/:id/archive", archiveOffer);
+router.put("/offers/:id/archive", toggleArchiveOffer);
 router.delete("/offers/archive/:id", deleteOffer);
 
 module.exports = router;

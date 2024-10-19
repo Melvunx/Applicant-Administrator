@@ -1,5 +1,5 @@
-import { Offers } from "@components/Offer";
 import axios from "axios";
+import { Offers } from "../../Pages/Home";
 
 interface CardProps {
   offer: Offers;
@@ -8,13 +8,15 @@ interface CardProps {
 
 const Card = ({ offer, onArchive }: CardProps) => {
   const archiveOffer = async () => {
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_OFFER_URL}/${offer._id}/archive`
-      );
-      onArchive(offer._id);
-    } catch (error) {
-      console.error("L'offre n'a pas pu être archivée ! ", error);
+    if (window.confirm("Vous voulez vraiment archiver cette offre ?")) {
+      try {
+        await axios.put(
+          `${import.meta.env.VITE_OFFER_URL}/${offer._id}/archive`
+        );
+        onArchive(offer._id);
+      } catch (error) {
+        console.error("L'offre n'a pas pu être archivée ! ", error);
+      }
     }
   };
 

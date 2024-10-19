@@ -10,8 +10,6 @@ module.exports.getOffers = async (req, res) => {
 };
 
 module.exports.addOffer = async (req, res) => {
-  console.log("Données reçues :", req.body); // Vérifie que les données arrivent bien
-
   const { title, type, company, url, applyDate, status } = req.body;
 
   if (!type || !company || !url || !applyDate) {
@@ -57,6 +55,8 @@ module.exports.deleteOffer = async (req, res) => {
       });
     } else {
       await offerModel.findByIdAndDelete(id);
+      console.log("Offre supprimée ! ", offer);
+
       return res.status(200).json({ message: "Offre supprimée avec succès !" });
     }
   } catch (error) {
@@ -67,24 +67,34 @@ module.exports.deleteOffer = async (req, res) => {
   }
 };
 
-module.exports.archiveOffer = async (req, res) => {
+module.exports.toggleArchiveOffer = async (req, res) => {
   try {
     const { id } = req.params;
+    const { archived } = req.body; // true pour archiver, false pour désarchiver
+
     const offer = await offerModel.findByIdAndUpdate(
       id,
-      { archived: true },
+      { archived },
       { new: true }
     );
 
     if (!offer) {
       return res.status(404).json({ message: "Offre non trouvée" });
     } else {
-      return res.status(200).json({ message: "Offre archivée avec succès !" });
+      const message = archived
+        ? "Offre archivée avec succès !"
+        : "Offre désarchivée avec succès !";
+
+      console.log(message, offer);
+      return res.status(200).json({ message });
     }
   } catch (error) {
-    console.error("Erreur lors de l'archivage de l'offre : ", error);
-    return res
-      .status(500)
-      .json({ error: "Erreur durant l'archivage de l'offre" });
+    console.error(
+      `Erreur durant le ${archived ? "archivage" : "désarchivage"} de l'offre : `,
+      error
+    );
+    return res.status(500).json({
+      error: `Erreur durant le ${archived ? "archivage" : "désarchivage"} de l'offre`,
+    });
   }
 };
