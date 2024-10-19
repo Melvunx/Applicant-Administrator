@@ -4,9 +4,10 @@ const OfferSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
-      unique: true,
       maxLenght: 200,
+    },
+    type: {
+      type: String,
     },
     company: {
       type: String,
@@ -22,7 +23,10 @@ const OfferSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "Pas encore envoyé",
+    },
+    archived: {
+      type: Boolean,
+      default: false,
     },
   },
   {

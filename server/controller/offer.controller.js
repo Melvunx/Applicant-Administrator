@@ -3,7 +3,6 @@ const offerModel = require("../models/offer.models");
 module.exports.getOffers = async (req, res) => {
   try {
     const offers = await offerModel.find().sort({ createdAt: -1 });
-    console.log("Toutes les offres : " + offers);
     return res.status(200).send(offers);
   } catch (err) {
     return res.status(400).json({ message: "Error to get data: " + err });
@@ -11,19 +10,81 @@ module.exports.getOffers = async (req, res) => {
 };
 
 module.exports.addOffer = async (req, res) => {
-  const { title, company, url, applyDate, status } = req.body;
+  console.log("Données reçues :", req.body); // Vérifie que les données arrivent bien
+
+  const { title, type, company, url, applyDate, status } = req.body;
+
+  if (!type || !company || !url || !applyDate) {
+    return res.status(400).json({ error: "Tous les champs sont obligatoires" });
+  }
+
+  // Si le type est "Candidature sur offre", le titre doit être présent
+  if (type === "Candidature sur offre" && !title) {
+    return res
+      .status(400)
+      .json({ message: "Le titre est requis pour une candidature sur offre" });
+  }
+
   try {
-    const newOffer = new Offer({
+    const newOffer = new offerModel({
       title,
+      type,
       company,
       url,
       applyDate,
       status,
     });
     const savedOffer = await newOffer.save();
-    console.log("Nouvelle offre ajoutée : " + savedOffer);
     res.status(201).json(savedOffer);
   } catch (error) {
-    res.status(500).json({ error: "Erreur lors de l'ajout de l'offre" });
+    console.error("Erreur lors de l'ajout à la base de données :", error); // Log de l'erreur
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports.deleteOffer = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const offer = await offerModel.findById(id);
+
+    if (!offer) {
+      return res.status(404).json({ message: "Offre non trouvée" });
+    }
+
+    if (!offer.archived) {
+      return res.status(400).json({
+        message: "Vous ne pouvez supprimer que les offres archivées.",
+      });
+    } else {
+      await offerModel.findByIdAndDelete(id);
+      return res.status(200).json({ message: "Offre supprimée avec succès !" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la suppression de l'offre : ", error);
+    return res
+      .status(500)
+      .json({ error: "Erreur durant la suppression de l'offre" });
+  }
+};
+
+module.exports.archiveOffer = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const offer = await offerModel.findByIdAndUpdate(
+      id,
+      { archived: true },
+      { new: true }
+    );
+
+    if (!offer) {
+      return res.status(404).json({ message: "Offre non trouvée" });
+    } else {
+      return res.status(200).json({ message: "Offre archivée avec succès !" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'archivage de l'offre : ", error);
+    return res
+      .status(500)
+      .json({ error: "Erreur durant l'archivage de l'offre" });
   }
 };
