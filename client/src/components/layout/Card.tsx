@@ -9,6 +9,7 @@ interface CardProps {
 
 const Card = ({ offer, onArchiveToggle }: CardProps) => {
   const [isClicked, setIsClick] = useState(false);
+  const [status, setStatut] = useState(offer.status);
 
   const toggleArchiveOffer = async () => {
     const action = offer.archived ? "désarchiver" : "archiver";
@@ -25,6 +26,28 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
     }
   };
 
+  const handleStatusChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newStatus = e.target.value;
+    setStatut(newStatus);
+    try {
+      await axios.put(`${import.meta.env.VITE_OFFER_URL}/${offer._id}/status`, {
+        status: newStatus,
+      });
+      console.log(
+        `Status de ${
+          offer.type === "Candidature spontanée"
+            ? `la candidature spontanée vers l'entreprise ${offer.company}`
+            : `pour l'offre ${offer.title} de l'entreprise ${offer.company}`
+        } a été modifié !`
+      );
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du status : ", error);
+      setStatut(offer.status);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between rounded-md bg-orange-300 p-5 shadow-md max-lg:w-1/2 lg:w-3/4">
       {offer.type === "Candidature spontanée" ? (
@@ -32,8 +55,29 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
       ) : (
         <h1 className="font-bold">{offer.title}</h1>
       )}
-      <p>{offer.company}</p>
-      <a href={offer.url}>Lien de l'offre</a>
+      <a href={offer.url}>{offer.company}</a>
+      <div className="flex w-1/3 justify-around">
+        {isClicked ? (
+          <select value={status} onChange={handleStatusChange}>
+            <option value="Pas envoyé">Pas envoyé</option>
+            <option value="Envoyé">Envoyé</option>
+            <option value="Refusé">Refusé</option>
+            <option value="Accepté">Accepté</option>
+          </select>
+        ) : (
+          <p>{status}</p>
+        )}
+        <button
+          onClick={() => setIsClick(false)}
+          onDoubleClick={() => setIsClick(true)}
+        >
+          Icon
+        </button>
+      </div>
+
+      <button onClick={toggleArchiveOffer}>
+        {offer.archived ? "Désarchiver" : "Archiver"}
+      </button>
       <p>
         {offer.applyDate.toLocaleDateString("fr-FR", {
           year: "numeric",
@@ -41,9 +85,6 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
           day: "2-digit",
         })}
       </p>
-      <button onClick={toggleArchiveOffer}>
-        {offer.archived ? "Désarchiver" : "Archiver"}
-      </button>
     </div>
   );
 };

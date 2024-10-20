@@ -90,11 +90,50 @@ module.exports.toggleArchiveOffer = async (req, res) => {
     }
   } catch (error) {
     console.error(
-      `Erreur durant le ${archived ? "archivage" : "désarchivage"} de l'offre : `,
+      `Erreur durant le ${
+        archived ? "archivage" : "désarchivage"
+      } de l'offre : `,
       error
     );
     return res.status(500).json({
-      error: `Erreur durant le ${archived ? "archivage" : "désarchivage"} de l'offre`,
+      error: `Erreur durant le ${
+        archived ? "archivage" : "désarchivage"
+      } de l'offre`,
+    });
+  }
+};
+
+module.exports.modifyStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const offer = await offerModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!offer) {
+      return res.status(404).json({ message: "Offre non trouvée" });
+    } else {
+      console.log(
+        `Status de ${
+          offer.type === "Candidature spontanée"
+            ? `la candidature spontanée vers l'entreprise ${offer.company}`
+            : `pour l'offre ${offer.title} de l'entreprise ${offer.company}`
+        } a été modifié !`
+      );
+      return res
+        .status(200)
+        .json({ message: "Le status à été modifié avec succès" });
+    }
+  } catch (error) {
+    console.error(
+      "Erreur durant la modification du status de l'offre : ",
+      error
+    );
+    return res.status(500).json({
+      error: "Erreur durant la modification du status de l'offre",
     });
   }
 };
