@@ -79,19 +79,19 @@ cron.schedule("0 10 * * *", async () => {
       console.log("Aucune offre trouvée pour l'envoi de mail");
     } else {
       offers.forEach(async (offer) => {
-        console.log("Offres  envoyées il y a 1 minute : ", offer);
+        console.log("Offres  envoyées il y a une semaine : ", offer);
         const relanceMail = {
           from: {
             name: "Rappeleur de relance",
             address: process.env.USER_ADDRESS,
           },
           to: [process.env.USER_ADDRESS],
-          subject: `Relance de Candidature - 1 minute depuis ma candidature chez ${offer.company}`,
+          subject: `Relance de Candidature - Une semaine depuis ma candidature chez ${offer.company}`,
           html: `
             <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;">
               <h1 style="font-size: 24px; color: #4CAF50;">Bonjour mon Melv,</h1>
               <p style="font-size: 16px; line-height: 1.6;">
-                Cela fait <strong>1 minute</strong> que tu as postulé chez 
+                Cela fait <strong>une semaine</strong> que tu as postulé chez 
                 <strong>${offer.company}</strong> avec 
                 ${
                   offer.type === "Candidature spontanée"
@@ -125,5 +125,3 @@ cron.schedule("0 10 * * *", async () => {
     console.error("Erreur lors de la vérification des offres : ", error);
   }
 });
-
-// sendMail(transporter, mailOptions);
