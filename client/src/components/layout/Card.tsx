@@ -3,19 +3,21 @@ import { Offers } from "../../Pages/Home";
 
 interface CardProps {
   offer: Offers;
-  onArchive: (id: string) => void;
+  onArchiveToggle: (id: string, isArchived: boolean) => void;
 }
 
-const Card = ({ offer, onArchive }: CardProps) => {
-  const archiveOffer = async () => {
-    if (window.confirm("Vous voulez vraiment archiver cette offre ?")) {
+const Card = ({ offer, onArchiveToggle }: CardProps) => {
+  const toggleArchiveOffer = async () => {
+    const action = offer.archived ? "désarchiver" : "archiver";
+    if (window.confirm(`Vous voulez vraiment ${action} cette offer ?`)) {
       try {
         await axios.put(
-          `${import.meta.env.VITE_OFFER_URL}/${offer._id}/archive`
+          `${import.meta.env.VITE_OFFER_URL}/${offer._id}/archive`,
+          { archived: !offer.archived }
         );
-        onArchive(offer._id);
+        onArchiveToggle(offer._id, !offer.archived);
       } catch (error) {
-        console.error("L'offre n'a pas pu être archivée ! ", error);
+        console.error(`Cette offre n'a pas pu être ${action} ! `, error);
       }
     }
   };
@@ -38,7 +40,9 @@ const Card = ({ offer, onArchive }: CardProps) => {
           day: "2-digit",
         })}
       </p>
-      <button onClick={archiveOffer}>Archiver</button>
+      <button onClick={toggleArchiveOffer}>
+        {offer.archived ? "Désarchiver" : "Archiver"}
+      </button>
     </div>
   );
 };

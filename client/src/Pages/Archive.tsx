@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Offers } from "./Home";
 
 const Archive = () => {
-  const [archivedData, setArchivedData] = useState([]);
+  const [archivedData, setArchivedData] = useState<Offers[]>([]);
 
   const fetchArchivedOffers = async () => {
     await axios.get(import.meta.env.VITE_OFFER_URL).then((res) => {
@@ -17,6 +17,21 @@ const Archive = () => {
         archivedOffers.filter((offer: Offers) => offer.archived === true)
       );
     });
+  };
+
+  const handleArchiveToggle = async (id: string, isArchived: boolean) => {
+    try {
+      const res = await axios.put(
+        `${import.meta.env.VITE_OFFER_URL}/${id}/archive`,
+        { archived: isArchived }
+      );
+      console.log(res.data.message);
+
+      // Rafraîchir les données d'archive après la mise à jour
+      fetchArchivedOffers();
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'archivage", error);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -42,6 +57,7 @@ const Archive = () => {
               key={offer._id}
               offer={offer}
               onDelete={handleDelete}
+              onArchiveToggle={handleArchiveToggle}
             />
           ))
         )}

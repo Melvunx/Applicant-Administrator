@@ -16,7 +16,7 @@ export interface Offers {
 }
 
 const Home = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Offers[]>([]);
 
   const fetchOffers = async () => {
     axios.get(import.meta.env.VITE_OFFER_URL).then((res) => {
@@ -28,8 +28,19 @@ const Home = () => {
     });
   };
 
-  const handleArchive = (id: string) => {
-    setData((prevData) => prevData.filter((offer: Offers) => offer._id !== id));
+  const handleArchiveToggle = async (id: string, isArchived: boolean) => {
+    try {
+      const res = await axios.put(
+        `${import.meta.env.VITE_OFFER_URL}/${id}/archive`,
+        { archived: isArchived }
+      );
+      console.log(res.data.message);
+
+      // Rafraîchir les données d'archive après la mise à jour
+      fetchOffers();
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'archivage", error);
+    }
   };
 
   useEffect(() => {
@@ -45,7 +56,11 @@ const Home = () => {
           <p>Aucune offre trouvée</p>
         ) : (
           data.map((offer, index) => (
-            <Card key={index} offer={offer} onArchive={handleArchive} />
+            <Card
+              key={index}
+              offer={offer}
+              onArchiveToggle={handleArchiveToggle}
+            />
           ))
         )}
       </ul>

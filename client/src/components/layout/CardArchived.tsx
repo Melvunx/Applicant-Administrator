@@ -4,9 +4,14 @@ import { Offers } from "../../Pages/Home";
 interface CardArchivedProps {
   offer: Offers;
   onDelete: (id: string) => void;
+  onArchiveToggle: (id: string, isArchived: boolean) => void;
 }
 
-const CardArchived = ({ offer, onDelete }: CardArchivedProps) => {
+const CardArchived = ({
+  offer,
+  onDelete,
+  onArchiveToggle,
+}: CardArchivedProps) => {
   const deleteOffer = async () => {
     if (window.confirm("Vous voulez vraiment supprimer cette offre ?")) {
       try {
@@ -16,6 +21,21 @@ const CardArchived = ({ offer, onDelete }: CardArchivedProps) => {
         onDelete(offer._id);
       } catch (error) {
         console.error("Cette offre n'a pas pu être supprimer ", error);
+      }
+    }
+  };
+
+  const toggleArchiveOffer = async () => {
+    const action = offer.archived ? "désarchiver" : "archiver";
+    if (window.confirm(`Vous voulez vraiment ${action} cette offer ?`)) {
+      try {
+        await axios.put(
+          `${import.meta.env.VITE_OFFER_URL}/${offer._id}/archive`,
+          { archived: !offer.archived }
+        );
+        onArchiveToggle(offer._id, !offer.archived);
+      } catch (error) {
+        console.error(`Cette offre n'a pas pu être ${action} ! `, error);
       }
     }
   };
@@ -38,7 +58,9 @@ const CardArchived = ({ offer, onDelete }: CardArchivedProps) => {
           day: "2-digit",
         })}
       </p>
-      {/* <button onClick={archiveOffer}>Archiver</button> */}
+      <button onClick={toggleArchiveOffer}>
+        {offer.archived ? "Désarchiver" : "Archiver"}
+      </button>
       <button onClick={deleteOffer}>Supprimer</button>
     </div>
   );
