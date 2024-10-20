@@ -1,5 +1,7 @@
 import axios from "axios";
 import { Offers } from "../../Pages/Home";
+import AnimatedShinyText from "../ui/animated-shiny-text";
+import { BorderBeam } from "../ui/border-beam";
 
 interface CardArchivedProps {
   offer: Offers;
@@ -25,6 +27,12 @@ const CardArchived = ({
     }
   };
 
+  const handleRandomUnits = (max: number): number => {
+    const min = max / 4;
+    const units = Math.ceil(Math.random() * max + min);
+    return units;
+  };
+
   const toggleArchiveOffer = async () => {
     const action = offer.archived ? "désarchiver" : "archiver";
     if (window.confirm(`Vous voulez vraiment ${action} cette offer ?`)) {
@@ -41,7 +49,16 @@ const CardArchived = ({
   };
 
   return (
-    <div className="flex items-center justify-between rounded-md bg-orange-300 p-5 shadow-md max-lg:w-1/2 lg:w-3/4">
+    <div className="relative flex  size-32 items-center justify-between rounded-lg p-5 shadow-md max-lg:h-full max-lg:w-4/5 max-lg:flex-col max-lg:gap-5 lg:w-3/4">
+      <BorderBeam
+        size={handleRandomUnits(300)}
+        duration={handleRandomUnits(15)}
+        anchor={90}
+        borderWidth={1.6}
+        colorFrom="#FDFC47"
+        colorTo="#65A30D"
+        delay={handleRandomUnits(10)}
+      />
       {offer.type === "Candidature spontanée" ? (
         <h1 className="font-bold">{offer.type}</h1>
       ) : (
@@ -58,9 +75,14 @@ const CardArchived = ({
           day: "2-digit",
         })}
       </p>
-      <button onClick={toggleArchiveOffer}>
-        {offer.archived ? "Désarchiver" : "Archiver"}
-      </button>
+      <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1">
+        <button
+          onClick={toggleArchiveOffer}
+          className="rounded-md border border-zinc-400 p-1 shadow-md transition-transform hover:scale-105 hover:border-zinc-600 hover:bg-lime-200 hover:font-bold"
+        >
+          {offer.archived ? "Désarchiver" : "Archiver"}
+        </button>
+      </AnimatedShinyText>
       <button onClick={deleteOffer}>Supprimer</button>
     </div>
   );

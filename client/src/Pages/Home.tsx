@@ -1,6 +1,7 @@
 import Card from "@/components/layout/Card";
 import Form from "@/components/layout/Form";
 import Navbar from "@/components/Navbar";
+import WordFadeIn from "@/components/ui/word-fade-in";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -50,7 +51,11 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      <h1 className="text-center font-bold">Mes offres où j'ai postulé !</h1>
+      <WordFadeIn
+        words="Les offres où j'ai postulé !"
+        delay={0.075}
+        className="font-title tracking-wide text-cyan-800"
+      />
       <ul className="flex flex-col items-center justify-center gap-5 py-4">
         {data.length === 0 ? (
           <p>Aucune offre trouvée</p>
