@@ -44,6 +44,14 @@ const Home = () => {
     }
   };
 
+  const updateStatus = (id: string, newStatus: string) => {
+    setData((prevOffers) =>
+      prevOffers.map((offer) =>
+        offer._id === id ? { ...offer, status: newStatus } : offer
+      )
+    );
+  };
+
   useEffect(() => {
     fetchOffers();
   }, []);
@@ -54,9 +62,9 @@ const Home = () => {
       <WordFadeIn
         words="Les offres où j'ai postulé !"
         delay={0.075}
-        className="font-title tracking-wide text-cyan-800"
+        className="font-title tracking-wide text-indigo-600"
       />
-      <ul className="flex flex-col items-center justify-center gap-5 py-4">
+      <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {data.length === 0 ? (
           <p>Aucune offre trouvée</p>
         ) : (
@@ -65,6 +73,7 @@ const Home = () => {
               key={index}
               offer={offer}
               onArchiveToggle={handleArchiveToggle}
+              onUpdateStatus={updateStatus}
             />
           ))
         )}

@@ -2,6 +2,7 @@ import axios from "axios";
 import { Offers } from "../../Pages/Home";
 import AnimatedShinyText from "../ui/animated-shiny-text";
 import { BorderBeam } from "../ui/border-beam";
+import Particles from "../ui/particles";
 
 interface CardArchivedProps {
   offer: Offers;
@@ -49,7 +50,7 @@ const CardArchived = ({
   };
 
   return (
-    <div className="relative flex  size-32 items-center justify-between rounded-lg p-5 shadow-md max-lg:h-full max-lg:w-4/5 max-lg:flex-col max-lg:gap-5 lg:w-3/4">
+    <div className="relative flex  size-32 items-center justify-between rounded-lg p-5 shadow-md lg:w-3/4 lg-max:h-full lg-max:w-4/5 lg-max:flex-col lg-max:gap-5">
       <BorderBeam
         size={handleRandomUnits(300)}
         duration={handleRandomUnits(15)}
@@ -58,6 +59,17 @@ const CardArchived = ({
         colorFrom="#FDFC47"
         colorTo="#65A30D"
         delay={handleRandomUnits(10)}
+      />
+      <Particles
+        className="absolute  left-0 top-0 size-full"
+        quantity={100}
+        staticity={50}
+        ease={50}
+        size={0.2}
+        refresh
+        color="#65A30D"
+        vx={0}
+        vy={0}
       />
       {offer.type === "Candidature spontanée" ? (
         <h1 className="font-bold">{offer.type}</h1>
@@ -78,7 +90,7 @@ const CardArchived = ({
       <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1">
         <button
           onClick={toggleArchiveOffer}
-          className="rounded-md border border-zinc-400 p-1 shadow-md transition-transform hover:scale-105 hover:border-zinc-600 hover:bg-lime-200 hover:font-bold"
+          className="border-zinc-400 hover:border-zinc-600 rounded-md border p-1 shadow-md transition-transform hover:scale-105 hover:bg-lime-200 hover:font-bold"
         >
           {offer.archived ? "Désarchiver" : "Archiver"}
         </button>

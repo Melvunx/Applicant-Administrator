@@ -1,5 +1,7 @@
+const withMT = require("@material-tailwind/react/utils/withMT");
+
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = withMT({
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -13,7 +15,6 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      colors: {},
       animation: {
         "border-beam": "border-beam calc(var(--duration)*1s) infinite linear",
         "shiny-text": "shiny-text 8s infinite",
@@ -36,4 +37,4 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
-};
+});

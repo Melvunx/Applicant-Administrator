@@ -1,3 +1,4 @@
+import { Input, Option, Select } from "@material-tailwind/react";
 import axios from "axios";
 import { CalendarPlus } from "lucide-react";
 import { useState } from "react";
@@ -10,13 +11,12 @@ interface FormProps {
 }
 
 const Form: React.FC<FormProps> = ({ refreshOffers }) => {
-  const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Candidature sur offre");
   const [company, setCompany] = useState("");
   const [url, setUrl] = useState("");
   const [applyDate, setApplyDate] = useState("");
-  const [status, setStatus] = useState("Pas envoyée");
+  const [status, setStatus] = useState("Pas envoyé");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,17 +50,9 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
     second: "#5B86E5",
   };
 
-  const handleFocus = (inputName: string) => {
-    setFocusedInput(inputName);
-  };
-
-  const handleBlur = () => {
-    setFocusedInput(null);
-  };
-
   return (
     <div className="flex h-screen flex-col items-center justify-evenly">
-      <h1 className="py-16">
+      <h1 className="w-full overflow-hidden py-16">
         {" "}
         <SparklesText
           className="text-center font-title text-3xl"
@@ -71,12 +63,12 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="relative flex flex-col items-center justify-center gap-3 rounded-lg bg-zinc-200/60 p-6 shadow-lg max-lg:w-4/5 lg:w-3/5"
+        className="relative flex flex-col items-center justify-center gap-3 rounded-lg bg-amber-200/10 p-6 shadow-lg lg:w-3/5 lg-max:w-4/5"
       >
         <Particles
           className="absolute  left-0 top-0 size-full"
-          quantity={125}
-          staticity={50}
+          quantity={150}
+          staticity={70}
           ease={50}
           size={0.4}
           refresh
@@ -84,130 +76,136 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
           vx={0}
           vy={0}
         />
-        <div className="flex items-center justify-evenly max-lg:flex-col max-lg:gap-4 lg:w-4/5">
+        <div className="flex flex-col gap-6 lg:w-3/4 lg-max:gap-8">
           {type !== "Candidature spontanée" && (
-            <div
-              className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-4 ${
-                focusedInput === "title" ? "bg-cyan-700/40" : ""
-              } `}
-            >
-              <label htmlFor="title" className="font-title">
-                Titre de l'offre
-              </label>
-              <input
+            <div className="">
+              <Input
                 type="text"
+                className="font-title tracking-wider"
+                color="blue"
                 name="title"
+                list="defaultTitle"
+                variant="standard"
+                placeholder="Ex : Développeur"
                 value={title}
+                label="Titre de l'offre"
                 onChange={(e) => setTitle(e.target.value)}
-                onFocus={() => handleFocus("title")}
-                onBlur={handleBlur}
                 required
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+                crossOrigin={undefined}
               />
+              <datalist id="defaultTitle">
+                <option value="Développeur Web"></option>
+                <option value="Développeur Front-End"></option>
+              </datalist>
             </div>
           )}
-          <div
-            className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-4  ${
-              focusedInput === "type" ? "bg-cyan-700/40" : ""
-            }`}
+
+          <Select
+            name="type"
+            value={type}
+            label="Type de demande"
+            className="font-title tracking-wider"
+            color="blue"
+            variant="static"
+            onChange={(value) => setType(value as string)}
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
-            <label htmlFor="type" className="font-title">
-              Type de demande
-            </label>
-            <select
-              name="type"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              onFocus={() => handleFocus("type")}
-              onBlur={handleBlur}
+            <Option
+              className="text-center font-title"
+              value="Candidature sur offre"
             >
-              <option value="Candidature sur offre">
-                Candidature sur offre
-              </option>
-              <option value="Candidature spontanée">
-                Candidature spontanée
-              </option>
-            </select>
-          </div>
-        </div>
-        <div
-          className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-4 ${
-            focusedInput === "company" ? "bg-cyan-700/40" : ""
-          }`}
-        >
-          <label htmlFor="company" className="font-title">
-            Nom de l'entreprise
-          </label>
-          <input
+              Candidature sur offre
+            </Option>
+            <Option
+              className="text-center font-title"
+              value="Candidature spontanée"
+            >
+              Candidature spontanée
+            </Option>
+          </Select>
+
+          <Input
             type="text"
+            className="font-title tracking-wider"
+            color="blue"
             name="company"
+            variant="standard"
+            placeholder="Ex : Séphora"
             value={company}
+            label="Nom de l'entreprise"
             onChange={(e) => setCompany(e.target.value)}
-            onFocus={() => handleFocus("company")}
-            onBlur={handleBlur}
             required
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+            crossOrigin={undefined}
           />
-        </div>
-        <div
-          className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-4 ${
-            focusedInput === "url" ? "bg-cyan-700/40" : ""
-          }`}
-        >
-          <label htmlFor="url" className="font-title">
-            Lien de l'offre
-          </label>
-          <input
-            type="text"
+
+          <Input
+            type="url"
+            variant="standard"
+            className="font-title tracking-wider"
+            color="blue"
+            placeholder="Url du lien"
             name="url"
             value={url}
+            label="Lien de l'offre"
             onChange={(e) => setUrl(e.target.value)}
-            onFocus={() => handleFocus("url")}
-            onBlur={handleBlur}
             required
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+            crossOrigin={undefined}
           />
-        </div>
-        <div
-          className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-4 ${
-            focusedInput === "apply" ? "bg-cyan-700/40" : ""
-          }`}
-        >
-          <label htmlFor="apply" className="font-title">
-            Date de candidature
-          </label>
-          <input
+
+          <Input
             type="date"
             name="apply"
+            className="font-title tracking-wider"
+            color="blue"
             value={applyDate}
+            label="Date de candidature"
+            variant="standard"
+            placeholder="Today"
             onChange={(e) => setApplyDate(e.target.value)}
-            onFocus={() => handleFocus("apply")}
-            onBlur={handleBlur}
             required
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+            crossOrigin={undefined}
           />
-        </div>
-        <div
-          className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-4 ${
-            focusedInput === "status" ? "bg-cyan-700/40" : ""
-          }`}
-        >
-          <label htmlFor="status" className="font-title">
-            Status
-          </label>
-          <select
+
+          <Select
             name="status"
+            variant="static"
+            className="font-title tracking-wider"
+            color="blue"
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            onFocus={() => handleFocus("status")}
-            onBlur={handleBlur}
+            label="Status Candidature"
+            onChange={(value) => setStatus(value as string)} // Modifier ici
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+            placeholder={undefined}
           >
-            <option value="Pas envoyé">Pas envoyé</option>
-            <option value="Envoyé">Envoyé</option>
-            <option value="Refusé">Refusé</option>
-            <option value="Accepté">Accepté</option>
-          </select>
+            <Option className="text-center font-title" value="Pas envoyé">
+              Pas envoyé
+            </Option>
+            <Option className="text-center font-title" value="Envoyé">
+              Envoyé
+            </Option>
+            <Option className="text-center font-title" value="Refusé">
+              Refusé
+            </Option>
+            <Option className="text-center font-title" value="Accepté">
+              Accepté
+            </Option>
+          </Select>
         </div>
         <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1">
           <button
             type="submit"
-            className="rounded-md border border-zinc-400 bg-zinc-50 px-7 py-1 shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:border-zinc-600 hover:bg-lime-300 hover:font-bold"
+            className="rounded-md border border-brown-700 bg-blue-gray-50 px-7 py-1 shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:border-gray-600 hover:bg-light-green-500 hover:font-bold"
           >
             <CalendarPlus size={22} strokeWidth={1.25} />
           </button>

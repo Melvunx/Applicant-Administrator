@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import WordFadeIn from "@/components/ui/word-fade-in";
 import CardArchived from "@layout/CardArchived";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -47,8 +48,12 @@ const Archive = () => {
   return (
     <div>
       <Navbar />
-      <h1 className="text-center font-bold text-lime-600 ">Page Archive</h1>
-      <ul className="flex flex-col items-center justify-center gap-5 py-4">
+      <WordFadeIn
+        words="Les offres archivées !"
+        delay={0.075}
+        className="font-title tracking-wide text-green-600"
+      />
+      <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {archivedData.length === 0 ? (
           <p>Aucune offre archivée trouvée</p>
         ) : (
