@@ -1,4 +1,4 @@
-import { Button } from "@material-tailwind/react";
+import { Button, Tooltip } from "@material-tailwind/react";
 import axios from "axios";
 import { PenLine } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -103,12 +103,21 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
           {offer.title}
         </h1>
       )}
-      <a
-        href={offer.url}
-        className="rounded-md px-3 py-2 font-global font-semibold italic underline transition-transform hover:scale-105 hover:not-italic hover:text-cyan-800"
+      <Tooltip
+        content="Lien de la candidature"
+        placement="bottom"
+        animate={{
+          mount: { scale: 1, y: 0 },
+          unmount: { scale: 0, y: -35 },
+        }}
       >
-        {offer.company}
-      </a>
+        <a
+          href={offer.url}
+          className="rounded-md px-3 py-2 font-global font-semibold italic underline transition-transform hover:scale-105 hover:not-italic hover:text-cyan-800"
+        >
+          {offer.company}
+        </a>
+      </Tooltip>
       <div className="flex items-center justify-around lg:w-1/3 lg-max:w-4/5">
         {isClicked ? (
           <select

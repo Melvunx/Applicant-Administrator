@@ -3,6 +3,7 @@ import { Offers } from "../../Pages/Home";
 import { BorderBeam } from "../ui/border-beam";
 import Particles from "../ui/particles";
 import ButtonOffers from "./ButtonOffers";
+import { Tooltip } from "@material-tailwind/react";
 
 interface CardArchivedProps {
   offer: Offers;
@@ -25,6 +26,21 @@ const CardArchived = ({
       } catch (error) {
         console.error("Cette offre n'a pas pu être supprimer ", error);
       }
+    }
+  };
+
+  const colorSelector = (status) => {
+    switch (status) {
+      case "Pas envoyé":
+        return "bg-orange-500/50";
+      case "Envoyé":
+        return "bg-indigo-300/50";
+      case "Refusé":
+        return "bg-red-500/50";
+      case "Accepté":
+        return "bg-green-500/50";
+      default:
+        return "bg-gray-300/50";
     }
   };
 
@@ -80,17 +96,32 @@ const CardArchived = ({
           {offer.title}
         </h1>
       )}
-      <p className="font-global">{offer.status}</p>
-      <a
-        href={offer.url}
-        className="rounded-md px-3 py-2 font-global font-semibold italic underline transition-transform hover:scale-105 hover:not-italic hover:text-cyan-800"
+      <p
+        className={`${colorSelector(
+          offer.status
+        )} cursor-default rounded-lg p-1 font-global font-medium italic tracking-wide shadow-md  `}
       >
-        {offer.company}
-      </a>
-      <p>
-        {offer.applyDate.toLocaleDateString("fr-FR", {
+        {offer.status}
+      </p>
+      <Tooltip
+        content="Lien de la candidature"
+        placement="bottom"
+        animate={{
+          mount: { scale: 1, y: 0 },
+          unmount: { scale: 0, y: -35 },
+        }}
+      >
+        <a
+          href={offer.url}
+          className="rounded-md px-3 py-2 font-global font-semibold italic underline transition-transform hover:scale-105 hover:not-italic hover:text-cyan-800"
+        >
+          {offer.company}
+        </a>
+      </Tooltip>
+      <p className="cursor-default font-global text-sm font-medium capitalize">
+        {new Date(offer.applyDate).toLocaleDateString("fr-FR", {
           year: "numeric",
-          month: "2-digit",
+          month: "long",
           day: "2-digit",
         })}
       </p>
