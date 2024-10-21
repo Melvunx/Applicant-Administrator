@@ -141,6 +141,9 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
           variant="outlined"
           onClick={() => setIsClick(!isClicked)} // Un seul clic pour éditer
           className="rounded-lg p-1 shadow-md transition-colors hover:bg-blue-200 hover:font-bold"
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
         >
           <PenLine size={22} strokeWidth={1.5} />
         </Button>

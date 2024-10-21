@@ -44,16 +44,40 @@ const FilterStatus = ({ onFilter }: StatusFilterProps) => {
   };
 
   return (
-    <Card className="mx-auto w-3/4">
-      <List className="flex lg:flex-row lg-max:flex-col">
+    <Card
+      placeholder={undefined}
+      onPointerEnterCapture={undefined}
+      onPointerLeaveCapture={undefined}
+      className="mx-auto w-3/4"
+    >
+      <List
+        placeholder={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+        className="flex lg:flex-row lg-max:flex-col"
+      >
         {["Pas envoyé", "Envoyé", "Refusé", "Accepté"].map((status) => (
-          <ListItem key={status} className="p-0">
+          <ListItem
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+            key={status}
+            className="p-0"
+          >
             <label
               htmlFor={`status-${status}`}
               className="flex items-center px-3 py-2 sm:w-2/5 md:w-3/12 lg:w-full lg:justify-center lg:gap-2 lg-max:mx-auto"
             >
-              <ListItemPrefix className="mr-3">
+              <ListItemPrefix
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+                className="mr-3"
+              >
                 <Radio
+                  placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                   name="status"
                   id={`status-${status}`}
                   value={status}
@@ -65,9 +89,13 @@ const FilterStatus = ({ onFilter }: StatusFilterProps) => {
                   containerProps={{
                     className: "p-0",
                   }}
+                  crossOrigin={undefined}
                 />
               </ListItemPrefix>
               <Typography
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
                 color="blue-gray"
                 className="font-medium text-blue-gray-400"
               >
@@ -77,8 +105,16 @@ const FilterStatus = ({ onFilter }: StatusFilterProps) => {
           </ListItem>
         ))}
         {/* Bouton de réinitialisation */}
-        <ListItem className="p-0">
+        <ListItem
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+          className="p-0"
+        >
           <Button
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
             onClick={handleReset}
             variant="text"
             className="w-full font-title tracking-wider text-blue-gray-400 hover:text-lime-700 hover:underline"

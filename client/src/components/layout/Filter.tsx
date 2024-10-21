@@ -39,15 +39,39 @@ const Filter = ({ offers, onFilter }: FilterProps) => {
   };
 
   return (
-    <Card className="mx-auto w-3/4">
-      <List className="flex lg:flex-row lg-max:flex-col lg-max:gap-4">
-        <ListItem className="p-0">
+    <Card
+      className="mx-auto w-3/4"
+      placeholder={undefined}
+      onPointerEnterCapture={undefined}
+      onPointerLeaveCapture={undefined}
+    >
+      <List
+        className="flex lg:flex-row lg-max:flex-col lg-max:gap-4"
+        placeholder={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      >
+        <ListItem
+          className="p-0"
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        >
           <label
             htmlFor="candidature-offre"
             className="flex w-full cursor-pointer items-center justify-center px-3 py-2"
           >
-            <ListItemPrefix className="mr-3">
+            <ListItemPrefix
+              className="mr-3"
+              placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            >
               <Radio
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+                crossOrigin={undefined}
                 name="offre-filter"
                 id="candidature-offre"
                 checked={filterType === "Candidature sur offre"}
@@ -61,6 +85,9 @@ const Filter = ({ offers, onFilter }: FilterProps) => {
               />
             </ListItemPrefix>
             <Typography
+              placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
               color="blue-gray"
               className="font-global font-medium tracking-wide text-blue-gray-400 hover:text-indigo-700"
             >
@@ -69,13 +96,26 @@ const Filter = ({ offers, onFilter }: FilterProps) => {
           </label>
         </ListItem>
         {/* Candidature spontanée */}
-        <ListItem className="p-0">
+        <ListItem
+          className="p-0"
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        >
           <label
             htmlFor="candidature-spontanée"
             className="flex w-full  cursor-pointer items-center justify-center px-3 py-2"
           >
-            <ListItemPrefix className="mr-3">
+            <ListItemPrefix
+              className="mr-3"
+              placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            >
               <Radio
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
                 name="offre-filter"
                 id="candidature-spontanée"
                 color="amber"
@@ -86,9 +126,13 @@ const Filter = ({ offers, onFilter }: FilterProps) => {
                 containerProps={{
                   className: "p-0",
                 }}
+                crossOrigin={undefined}
               />
             </ListItemPrefix>
             <Typography
+              placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
               color="blue-gray"
               className="font-global font-medium tracking-wide text-blue-gray-400 hover:text-indigo-700"
             >
@@ -97,10 +141,18 @@ const Filter = ({ offers, onFilter }: FilterProps) => {
           </label>
         </ListItem>
         {/* Bouton de réinitialisation sur la même ligne */}
-        <ListItem className="flex justify-center p-0">
+        <ListItem
+          className="flex justify-center p-0"
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        >
           {" "}
           {/* Ajout d'une marge à gauche pour espacer */}
           <Button
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
             onClick={resetFilters}
             variant="text"
             className="w-full font-title tracking-wider text-blue-gray-400 hover:text-indigo-700 hover:underline"

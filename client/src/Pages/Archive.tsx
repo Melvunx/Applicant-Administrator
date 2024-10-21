@@ -12,7 +12,7 @@ import { Offers } from "./Home";
 const Archive = () => {
   const [archivedData, setArchivedData] = useState<Offers[]>([]);
   const [filteredData, setFilteredData] = useState<Offers[]>([]); // État pour les données filtrées
-  const [selectedStatus, setSelectedStatus] = useState<string>(""); // État pour le statut sélectionné
+  const [, setSelectedStatus] = useState<string>(""); // État pour le statut sélectionné
 
   // Récupération des offres archivées depuis l'API
   const fetchArchivedOffers = async () => {

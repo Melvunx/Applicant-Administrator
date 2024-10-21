@@ -68,7 +68,7 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="relative flex flex-col items-center justify-center gap-3 rounded-lg bg-amber-200/10 p-6 shadow-lg lg:w-3/5 lg-max:w-4/5"
+        className="relative flex flex-col items-center justify-center gap-3 rounded-lg bg-amber-200/30 p-6 shadow-lg lg:w-3/5 lg-max:w-4/5"
       >
         <Particles
           className="absolute  left-0 top-0 size-full"
@@ -216,6 +216,9 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
           }}
         >
           <Button
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
             type="submit"
             variant="outlined"
             className="rounded-md border border-brown-700 bg-blue-gray-50 px-7 py-1 shadow-md transition-colors hover:border-gray-600 hover:bg-green-400"

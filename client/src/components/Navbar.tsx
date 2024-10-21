@@ -6,7 +6,7 @@ const Navbar = () => {
 
   return (
     <div>
-      <ul className="flex w-full items-center bg-amber-400/20 justify-evenly px-3 py-5 font-title">
+      <ul className="flex w-full items-center justify-evenly bg-amber-400/20 px-3 py-5 font-title">
         <NavLink
           to="/Applicant-Administrator/"
           className={(nav) =>
@@ -17,6 +17,9 @@ const Navbar = () => {
           }
         >
           <Typography
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
             as="li"
             variant="lead"
             color="blue-gray"
@@ -34,6 +37,9 @@ const Navbar = () => {
           }
         >
           <Typography
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
             as="li"
             variant="lead"
             color="green"

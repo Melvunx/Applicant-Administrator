@@ -1,9 +1,9 @@
+import { Tooltip } from "@material-tailwind/react";
 import axios from "axios";
 import { Offers } from "../../Pages/Home";
 import { BorderBeam } from "../ui/border-beam";
 import Particles from "../ui/particles";
 import ButtonOffers from "./ButtonOffers";
-import { Tooltip } from "@material-tailwind/react";
 
 interface CardArchivedProps {
   offer: Offers;
@@ -29,7 +29,7 @@ const CardArchived = ({
     }
   };
 
-  const colorSelector = (status) => {
+  const colorSelector = (status: string): string => {
     switch (status) {
       case "Pas envoyé":
         return "bg-orange-500/50";
