@@ -77,7 +77,7 @@ const Archive = () => {
       />
       <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {archivedData.length === 0 ? (
-            <FindNothingText />
+          <FindNothingText offerPage="archivée" />
         ) : (
           archivedData.map((offer: Offers) => (
             <CardArchived

@@ -13,10 +13,10 @@ interface CardProps {
 
 const Card = ({ offer, onArchiveToggle }: CardProps) => {
   const [isClicked, setIsClick] = useState(false);
-  const [status, setStatus] = useState(offer.status);
+  const [status, setStatus] = useState<string>(offer.status); // Assurez-vous que le type de status est bien string
 
   useEffect(() => {
-    setStatus(offer.status);
+    setStatus(offer.status); // Réinitialisation du statut à chaque mise à jour d'offer
   }, [offer.status]);
 
   const toggleArchiveOffer = async () => {
@@ -70,17 +70,13 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
     const newStatus = e.target.value;
     setStatus(newStatus);
     try {
-      const res = await axios.put(
-        `${import.meta.env.VITE_OFFER_URL}/${offer._id}/status`,
-        {
-          status: newStatus,
-        }
-      );
-      setStatus(res.data.status);
-      console.log(`Status a été modifié !`);
+      await axios.put(`${import.meta.env.VITE_OFFER_URL}/${offer._id}/status`, {
+        status: newStatus,
+      });
+      console.log(`Statut mis à jour : ${newStatus}`);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du status : ", error);
-      setStatus(offer.status);
+      console.error("Erreur lors de la mise à jour du statut : ", error);
+      setStatus(offer.status); 
     }
   };
 
@@ -137,8 +133,7 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
           </p>
         )}
         <button
-          onClick={() => setIsClick(false)}
-          onDoubleClick={() => setIsClick(true)}
+          onClick={() => setIsClick(!isClicked)} // Un seul clic pour éditer
           className="rounded-md border p-1 shadow-md transition-transform hover:scale-125 hover:animate-pulse hover:bg-blue-200 hover:font-bold"
         >
           <PenLine size={22} strokeWidth={1.5} />

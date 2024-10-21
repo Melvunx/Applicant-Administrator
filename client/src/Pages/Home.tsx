@@ -81,7 +81,7 @@ const Home = () => {
       />
       <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {data.length === 0 ? (
-          <FindNothingText />
+          <FindNothingText offerPage="récurrente" />
         ) : (
           data.map((offer, index) => (
             <Card
