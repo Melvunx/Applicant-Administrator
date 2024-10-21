@@ -1,3 +1,5 @@
+import ButtonOffers from "@/components/layout/ButtonOffers";
+import FindNothingText from "@/components/layout/FindNothingText";
 import Navbar from "@/components/Navbar";
 import WordFadeIn from "@/components/ui/word-fade-in";
 import CardArchived from "@layout/CardArchived";
@@ -41,6 +43,26 @@ const Archive = () => {
     );
   };
 
+  const deleteAllOffers = async () => {
+    if (window.confirm("Vous voulez vraiment supprimer toutes les offres ?")) {
+      try {
+        await Promise.all(
+          archivedData.map((offer) =>
+            axios.delete(
+              `${import.meta.env.VITE_OFFER_URL}/archive/${offer._id}`
+            )
+          )
+        );
+        fetchArchivedOffers();
+      } catch (error) {
+        console.error(
+          "Erreur lors de la suppression de toutes les offres : ",
+          error
+        );
+      }
+    }
+  };
+
   useEffect(() => {
     fetchArchivedOffers();
   }, []);
@@ -55,7 +77,7 @@ const Archive = () => {
       />
       <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {archivedData.length === 0 ? (
-          <p>Aucune offre archivée trouvée</p>
+            <FindNothingText />
         ) : (
           archivedData.map((offer: Offers) => (
             <CardArchived
@@ -67,6 +89,15 @@ const Archive = () => {
           ))
         )}
       </ul>
+      {archivedData.length > 1 && (
+        <div className="flex justify-center py-3">
+          <ButtonOffers onClick={deleteAllOffers}>
+            <p className="rounded-md border px-4 py-2 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-red-400 hover:font-bold">
+              Supprimer toutes les offres
+            </p>
+          </ButtonOffers>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,9 +2,9 @@ import axios from "axios";
 import { PenLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Offers } from "../../Pages/Home";
-import AnimatedShinyText from "../ui/animated-shiny-text";
 import { BorderBeam } from "../ui/border-beam";
 import Particles from "../ui/particles";
+import ButtonOffers from "./ButtonOffers";
 
 interface CardProps {
   offer: Offers;
@@ -85,7 +85,7 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
   };
 
   return (
-    <div className="bg-zinc-200/40 relative flex size-32 items-center justify-between rounded-lg p-5 shadow-lg lg:w-3/4 lg-max:h-full lg-max:w-4/5 lg-max:flex-col lg-max:gap-5">
+    <div className="relative flex size-32 items-center justify-between rounded-lg bg-gray-200/60 p-5 shadow-lg lg:w-3/4 lg-max:h-full lg-max:w-4/5 lg-max:flex-col lg-max:gap-5">
       <BorderBeam
         size={handleRandomUnits(300)}
         duration={handleRandomUnits(15)}
@@ -136,24 +136,19 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
             {status}
           </p>
         )}
-        <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1">
-          <button
-            onClick={() => setIsClick(false)}
-            onDoubleClick={() => setIsClick(true)}
-            className="border-zinc-400 hover:border-zinc-600 rounded-md border p-1 shadow-md transition-transform hover:scale-125 hover:animate-pulse hover:bg-blue-200 hover:font-bold"
-          >
-            <PenLine size={22} strokeWidth={1.5} />
-          </button>
-        </AnimatedShinyText>
-      </div>
-      <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1">
         <button
-          onClick={toggleArchiveOffer}
-          className="border-zinc-400 hover:border-zinc-600 rounded-md border p-1 shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:bg-lime-200 hover:font-bold"
+          onClick={() => setIsClick(false)}
+          onDoubleClick={() => setIsClick(true)}
+          className="rounded-md border p-1 shadow-md transition-transform hover:scale-125 hover:animate-pulse hover:bg-blue-200 hover:font-bold"
         >
-          {offer.archived ? "Désarchiver" : "Archiver"}
+          <PenLine size={22} strokeWidth={1.5} />
         </button>
-      </AnimatedShinyText>
+      </div>
+      <ButtonOffers onClick={toggleArchiveOffer}>
+        <p className="rounded-md border p-1 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-lime-200 hover:font-bold">
+          {offer.archived ? "Désarchiver" : "Archiver"}
+        </p>
+      </ButtonOffers>
       <p className="cursor-default font-global text-sm font-medium capitalize">
         {new Date(offer.applyDate).toLocaleDateString("fr-FR", {
           year: "numeric",

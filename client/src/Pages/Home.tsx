@@ -1,9 +1,9 @@
 import ButtonOffers from "@/components/layout/ButtonOffers";
 import Card from "@/components/layout/Card";
+import FindNothingText from "@/components/layout/FindNothingText";
 import Form from "@/components/layout/Form";
 import Navbar from "@/components/Navbar";
 import WordFadeIn from "@/components/ui/word-fade-in";
-import { Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -57,7 +57,7 @@ const Home = () => {
             )
           )
         );
-        fetchOffers(); // Rafraîchir les offres après l'archivage
+        fetchOffers();
       } catch (error) {
         console.error(
           "Erreur lors de l'archivage de toutes les offres : ",
@@ -79,18 +79,9 @@ const Home = () => {
         delay={0.075}
         className="font-title tracking-wide text-indigo-600"
       />
-      <ButtonOffers onClick={archiveAllOffers}>
-        <Typography
-          variant="small"
-          color="green"
-          className="rounded-md border border-brown-700 bg-blue-gray-50 px-7 py-1 font-title shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:border-gray-600 hover:bg-light-green-500 hover:font-bold"
-        >
-          Archiver toutes les offres
-        </Typography>
-      </ButtonOffers>
       <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {data.length === 0 ? (
-          <p>Aucune offre trouvée</p>
+          <FindNothingText />
         ) : (
           data.map((offer, index) => (
             <Card
@@ -101,6 +92,15 @@ const Home = () => {
           ))
         )}
       </ul>
+      {data.length > 1 && (
+        <div className="flex justify-center p-3">
+          <ButtonOffers onClick={archiveAllOffers}>
+            <h1 className="rounded-md border px-4 py-2 font-title text-lg shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:bg-lime-200 hover:font-bold">
+              Archiver toutes les offres
+            </h1>
+          </ButtonOffers>
+        </div>
+      )}
       <Form refreshOffers={fetchOffers} />
     </div>
   );
