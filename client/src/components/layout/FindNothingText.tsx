@@ -1,4 +1,5 @@
-import { Typography } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
+import { ArrowBigDownDash } from "lucide-react";
 import TypingAnimation from "../ui/typing-animation";
 
 interface FNTProps {
@@ -7,7 +8,7 @@ interface FNTProps {
 
 const FindNothingText: React.FC<FNTProps> = ({ offerPage }) => {
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-evenly">
       <Typography as="p" color="deep-purple" variant="h3">
         <TypingAnimation
           text={`Aucune offre ${offerPage} n'a été trouvée`}
@@ -15,6 +16,11 @@ const FindNothingText: React.FC<FNTProps> = ({ offerPage }) => {
           className="font-title"
         />
       </Typography>
+      <a href="#footer">
+        <Button variant="outlined" className="rounded-full" color="indigo">
+          <ArrowBigDownDash size={36} strokeWidth={1.25} />
+        </Button>
+      </a>
     </div>
   );
 };

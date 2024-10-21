@@ -1,8 +1,13 @@
-import { Input, Option, Select } from "@material-tailwind/react";
+import {
+  Button,
+  Input,
+  Option,
+  Select,
+  Tooltip,
+} from "@material-tailwind/react";
 import axios from "axios";
 import { CalendarPlus } from "lucide-react";
 import { useState } from "react";
-import AnimatedShinyText from "../ui/animated-shiny-text";
 import Particles from "../ui/particles";
 import SparklesText from "../ui/sparkles-text";
 
@@ -39,7 +44,7 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
       setCompany("");
       setUrl("");
       setApplyDate("");
-      setStatus("Pas envoyée");
+      setStatus("Pas envoyé");
     } catch (err) {
       console.error("Erreur lors de l'ajout d'offre : " + err);
     }
@@ -76,7 +81,7 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
           vx={0}
           vy={0}
         />
-        <div className="flex flex-col gap-6 lg:w-3/4 lg-max:gap-8">
+        <div className="flex flex-col gap-6  lg:w-3/4 lg-max:gap-8">
           {type !== "Candidature spontanée" && (
             <div className="">
               <Input
@@ -202,14 +207,22 @@ const Form: React.FC<FormProps> = ({ refreshOffers }) => {
             </Option>
           </Select>
         </div>
-        <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1">
-          <button
+        <Tooltip
+          content="Ajouter l'offre"
+          placement="bottom"
+          animate={{
+            mount: { scale: 1, y: 0 },
+            unmount: { scale: 0, y: -25 },
+          }}
+        >
+          <Button
             type="submit"
-            className="rounded-md border border-brown-700 bg-blue-gray-50 px-7 py-1 shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:border-gray-600 hover:bg-light-green-500 hover:font-bold"
+            variant="outlined"
+            className="rounded-md border border-brown-700 bg-blue-gray-50 px-7 py-1 shadow-md transition-colors hover:border-gray-600 hover:bg-green-400"
           >
             <CalendarPlus size={22} strokeWidth={1.25} />
-          </button>
-        </AnimatedShinyText>
+          </Button>
+        </Tooltip>
       </form>
     </div>
   );

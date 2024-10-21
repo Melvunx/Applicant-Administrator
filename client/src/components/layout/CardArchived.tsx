@@ -94,15 +94,17 @@ const CardArchived = ({
           day: "2-digit",
         })}
       </p>
-      <ButtonOffers onClick={toggleArchiveOffer}>
-        <p className="rounded-md border p-1 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-indigo-200 hover:font-bold">
-          {offer.archived ? "Désarchiver" : "Archiver"}
-        </p>
+      <ButtonOffers
+        className="rounded-md border p-1 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-indigo-200 hover:font-bold"
+        onClick={toggleArchiveOffer}
+      >
+        {offer.archived ? "Désarchiver" : "Archiver"}
       </ButtonOffers>
-      <ButtonOffers onClick={deleteOffer}>
-        <p className="rounded-md border p-1 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-red-400 hover:font-bold">
-          Supprimer
-        </p>
+      <ButtonOffers
+        className="rounded-md border p-1 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-red-400 hover:font-bold"
+        onClick={deleteOffer}
+      >
+        Supprimer
       </ButtonOffers>
     </div>
   );

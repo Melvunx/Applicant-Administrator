@@ -1,3 +1,4 @@
+import { Button } from "@material-tailwind/react";
 import axios from "axios";
 import { PenLine } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -41,27 +42,18 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
   };
 
   const colorSelector = () => {
-    let background: string;
-
     switch (status) {
       case "Pas envoyé":
-        background = "bg-orange-500/50";
-        break;
+        return "bg-orange-500/50";
       case "Envoyé":
-        background = "bg-indigo-300/50";
-        break;
+        return "bg-indigo-300/50";
       case "Refusé":
-        background = "bg-red-500/50";
-        break;
+        return "bg-red-500/50";
       case "Accepté":
-        background = "bg-green-500/50";
-        break;
+        return "bg-green-500/50";
       default:
-        background = "bg-gray-300/50";
-        break;
+        return "bg-gray-300/50";
     }
-
-    return background;
   };
 
   const handleStatusChange = async (
@@ -76,7 +68,7 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
       console.log(`Statut mis à jour : ${newStatus}`);
     } catch (error) {
       console.error("Erreur lors de la mise à jour du statut : ", error);
-      setStatus(offer.status); 
+      setStatus(offer.status);
     }
   };
 
@@ -117,9 +109,13 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
       >
         {offer.company}
       </a>
-      <div className="flex items-center justify-around lg:w-1/3 lg-max:w-3/5">
+      <div className="flex items-center justify-around lg:w-1/3 lg-max:w-4/5">
         {isClicked ? (
-          <select value={status} onChange={handleStatusChange}>
+          <select
+            className="rounded-lg bg-black/60 p-1 text-center font-title text-white"
+            value={status}
+            onChange={handleStatusChange}
+          >
             <option value="Pas envoyé">Pas envoyé</option>
             <option value="Envoyé">Envoyé</option>
             <option value="Refusé">Refusé</option>
@@ -127,22 +123,24 @@ const Card = ({ offer, onArchiveToggle }: CardProps) => {
           </select>
         ) : (
           <p
-            className={`cursor-default rounded-lg p-1 font-global font-light italic tracking-wide shadow-md ${colorSelector()}`}
+            className={`cursor-default rounded-lg p-1 font-global font-medium italic tracking-wide shadow-md ${colorSelector()}`}
           >
             {status}
           </p>
         )}
-        <button
+        <Button
+          variant="outlined"
           onClick={() => setIsClick(!isClicked)} // Un seul clic pour éditer
-          className="rounded-md border p-1 shadow-md transition-transform hover:scale-125 hover:animate-pulse hover:bg-blue-200 hover:font-bold"
+          className="rounded-lg p-1 shadow-md transition-colors hover:bg-blue-200 hover:font-bold"
         >
           <PenLine size={22} strokeWidth={1.5} />
-        </button>
+        </Button>
       </div>
-      <ButtonOffers onClick={toggleArchiveOffer}>
-        <p className="rounded-md border p-1 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-lime-200 hover:font-bold">
-          {offer.archived ? "Désarchiver" : "Archiver"}
-        </p>
+      <ButtonOffers
+        className="rounded-md border p-1 font-title shadow-md  transition-transform hover:scale-105 hover:animate-pulse hover:bg-lime-200 hover:font-bold"
+        onClick={toggleArchiveOffer}
+      >
+        {offer.archived ? "Désarchiver" : "Archiver"}
       </ButtonOffers>
       <p className="cursor-default font-global text-sm font-medium capitalize">
         {new Date(offer.applyDate).toLocaleDateString("fr-FR", {

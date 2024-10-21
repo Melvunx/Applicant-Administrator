@@ -1,5 +1,7 @@
+import Footer from "@/components/Footer";
 import ButtonOffers from "@/components/layout/ButtonOffers";
 import Card from "@/components/layout/Card";
+import Filter from "@/components/layout/Filter";
 import FindNothingText from "@/components/layout/FindNothingText";
 import Form from "@/components/layout/Form";
 import Navbar from "@/components/Navbar";
@@ -20,15 +22,24 @@ export interface Offers {
 
 const Home = () => {
   const [data, setData] = useState<Offers[]>([]);
+  const [filteredData, setFilteredData] = useState<Offers[]>([]); // Ajout pour gérer les données filtrées
 
+  // Fetch des offres depuis l'API
   const fetchOffers = async () => {
-    axios.get(import.meta.env.VITE_OFFER_URL).then((res) => {
+    try {
+      const res = await axios.get(import.meta.env.VITE_OFFER_URL);
       const offers = res.data.map((offer: Offers) => ({
         ...offer,
         applyDate: new Date(offer.applyDate), // Conversion en objet Date
       }));
-      setData(offers.filter((offer: Offers) => offer.archived === false));
-    });
+      const activeOffers = offers.filter(
+        (offer: Offers) => offer.archived === false
+      );
+      setData(activeOffers);
+      setFilteredData(activeOffers); // Initialiser filteredData avec toutes les offres
+    } catch (error) {
+      console.error("Erreur lors de la récupération des offres", error);
+    }
   };
 
   const handleArchiveToggle = async (id: string, isArchived: boolean) => {
@@ -38,9 +49,7 @@ const Home = () => {
         { archived: isArchived }
       );
       console.log(res.data.message);
-
-      // Rafraîchir les données d'archive après la mise à jour
-      fetchOffers();
+      fetchOffers(); // Rafraîchir les offres après l'archivage
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'archivage", error);
     }
@@ -57,7 +66,7 @@ const Home = () => {
             )
           )
         );
-        fetchOffers();
+        fetchOffers(); // Rafraîchir les offres après l'archivage
       } catch (error) {
         console.error(
           "Erreur lors de l'archivage de toutes les offres : ",
@@ -71,19 +80,27 @@ const Home = () => {
     fetchOffers();
   }, []);
 
+  // Fonction de mise à jour des offres filtrées
+  const handleFilter = (filteredOffers: Offers[]) => {
+    setFilteredData(filteredOffers);
+  };
+
   return (
     <div>
       <Navbar />
       <WordFadeIn
         words="Les offres où j'ai postulé !"
         delay={0.075}
-        className="font-title tracking-wide text-indigo-600"
+        className="mx-auto w-10/12 py-6 font-title tracking-wide text-indigo-600  sm:w-9/12 sm:text-xl md:text-2xl lg:text-5xl"
       />
+      {/* Passer la fonction de filtrage et les données d'offres */}
+      <Filter offers={data} onFilter={handleFilter} />
+
       <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
-        {data.length === 0 ? (
+        {filteredData.length === 0 ? (
           <FindNothingText offerPage="récurrente" />
         ) : (
-          data.map((offer, index) => (
+          filteredData.map((offer, index) => (
             <Card
               key={index}
               offer={offer}
@@ -92,16 +109,20 @@ const Home = () => {
           ))
         )}
       </ul>
-      {data.length > 1 && (
+
+      {filteredData.length > 1 && (
         <div className="flex justify-center p-3">
-          <ButtonOffers onClick={archiveAllOffers}>
-            <h1 className="rounded-md border px-4 py-2 font-title text-lg shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:bg-lime-200 hover:font-bold">
-              Archiver toutes les offres
-            </h1>
+          <ButtonOffers
+            className="rounded-md border px-4 py-2 font-title text-lg shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:bg-lime-200 hover:font-bold"
+            onClick={archiveAllOffers}
+          >
+            Archiver toutes les offres
           </ButtonOffers>
         </div>
       )}
+
       <Form refreshOffers={fetchOffers} />
+      <Footer />
     </div>
   );
 };
