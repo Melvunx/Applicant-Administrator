@@ -1,7 +1,9 @@
+import ButtonOffers from "@/components/layout/ButtonOffers";
 import Card from "@/components/layout/Card";
 import Form from "@/components/layout/Form";
 import Navbar from "@/components/Navbar";
 import WordFadeIn from "@/components/ui/word-fade-in";
+import { Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -44,12 +46,25 @@ const Home = () => {
     }
   };
 
-  const updateStatus = (id: string, newStatus: string) => {
-    setData((prevOffers) =>
-      prevOffers.map((offer) =>
-        offer._id === id ? { ...offer, status: newStatus } : offer
-      )
-    );
+  const archiveAllOffers = async () => {
+    if (window.confirm("Vous voulez vraiment archiver toutes les offres ?")) {
+      try {
+        await Promise.all(
+          data.map((offer) =>
+            axios.put(
+              `${import.meta.env.VITE_OFFER_URL}/${offer._id}/archive`,
+              { archived: true }
+            )
+          )
+        );
+        fetchOffers(); // Rafraîchir les offres après l'archivage
+      } catch (error) {
+        console.error(
+          "Erreur lors de l'archivage de toutes les offres : ",
+          error
+        );
+      }
+    }
   };
 
   useEffect(() => {
@@ -64,6 +79,15 @@ const Home = () => {
         delay={0.075}
         className="font-title tracking-wide text-indigo-600"
       />
+      <ButtonOffers onClick={archiveAllOffers}>
+        <Typography
+          variant="small"
+          color="green"
+          className="rounded-md border border-brown-700 bg-blue-gray-50 px-7 py-1 font-title shadow-md transition-transform hover:scale-105 hover:animate-pulse hover:border-gray-600 hover:bg-light-green-500 hover:font-bold"
+        >
+          Archiver toutes les offres
+        </Typography>
+      </ButtonOffers>
       <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {data.length === 0 ? (
           <p>Aucune offre trouvée</p>
@@ -73,7 +97,6 @@ const Home = () => {
               key={index}
               offer={offer}
               onArchiveToggle={handleArchiveToggle}
-              onUpdateStatus={updateStatus}
             />
           ))
         )}
