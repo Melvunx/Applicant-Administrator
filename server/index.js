@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const nodemailer = require("nodemailer");
-const cron = require("node-cron");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config({ path: "./.env" });
@@ -37,22 +36,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const mailOptions = {
-  from: {
-    name: "Rappeleur de relance",
-    address: process.env.USER_ADDRESS,
-  },
-  to: [process.env.USER_ADDRESS],
-  subject: "Relance de Candidature",
-  text: ` Bonjour mon reuf,
-  
-Tu dois relancer cette demande car cela fait une semaine qu'elle a été envoyée !
-
-Cordialement,
-Toi même.
-`,
-};
-
 const sendMail = async (transporter, mailOptions) => {
   try {
     await transporter.sendMail(mailOptions);
@@ -69,7 +52,7 @@ transporter.verify((error, succes) => {
 });
 
 //Envoie de tâche planifiée
-cron.schedule("0 10 * * *", async () => {
+export const sendScheduledEmails = async () => {
   console.log("Vérification des offres envoyées il y a une semaine...");
 
   const oneWeekAgo = new Date();
@@ -82,12 +65,12 @@ cron.schedule("0 10 * * *", async () => {
       status: "Envoyé",
     });
 
-    //Envoie d'email
     if (offers.length === 0) {
       console.log("Aucune offre trouvée pour l'envoi de mail");
     } else {
-      offers.forEach(async (offer) => {
-        console.log("Offres  envoyées il y a une semaine : ", offer);
+      for (const offer of offers) {
+        console.log("Offres envoyées il y a une semaine : ", offer);
+
         const relanceMail = {
           from: {
             name: "Rappeleur de relance",
@@ -123,13 +106,14 @@ cron.schedule("0 10 * * *", async () => {
             </div>
           `,
         };
+
         await sendMail(transporter, relanceMail);
         console.log(
           `L'email de relance pour l'entreprise ${offer.company} a bien été envoyé !`
         );
-      });
+      }
     }
   } catch (error) {
     console.error("Erreur lors de la vérification des offres : ", error);
   }
-});
+};
