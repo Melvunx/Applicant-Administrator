@@ -23,7 +23,7 @@ app.listen(process.env.PORT || 3000, (err) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello World! #2");
+  res.send("Hello World !");
 });
 
 const transporter = nodemailer.createTransport({
