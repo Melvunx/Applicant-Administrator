@@ -1,4 +1,4 @@
-import { sendScheduledEmails } from "..";
+const { sendScheduledEmails } = require("../index");
 
 export default async function handler(req, res) {
   if (
