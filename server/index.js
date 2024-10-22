@@ -117,3 +117,5 @@ exports.sendScheduledEmails = async () => {
     console.error("Erreur lors de la vérification des offres : ", error);
   }
 };
+
+module.exports = app;
