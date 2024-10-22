@@ -14,8 +14,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api", require("./routes/applicant.routes"));
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is listening on http://localhost:${process.env.PORT} !`);
+app.listen(process.env.PORT || 3000, (err) => {
+  if (err) {
+    console.error("Failed to start the server:", err);
+  } else {
+    console.log(`Server is listening on port ${process.env.PORT || 3000}`);
+  }
+});
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
 const transporter = nodemailer.createTransport({
