@@ -52,7 +52,7 @@ transporter.verify((error, succes) => {
 });
 
 //Envoie de tâche planifiée
-exports.sendScheduledEmails = async () => {
+module.exports.sendScheduledEmails = async () => {
   console.log("Vérification des offres envoyées il y a une semaine...");
 
   const oneWeekAgo = new Date();
