@@ -4,6 +4,7 @@ import Card from "@/components/layout/Card";
 import Filter from "@/components/layout/Filter";
 import FindNothingText from "@/components/layout/FindNothingText";
 import Form from "@/components/layout/Form";
+import OfferCounter from "@/components/layout/OfferCounter";
 import Navbar from "@/components/Navbar";
 import WordFadeIn from "@/components/ui/word-fade-in";
 import axios from "axios";
@@ -89,12 +90,18 @@ const Home = () => {
     <div>
       <Navbar />
       <WordFadeIn
-        words="Les offres où j'ai postulé !"
+        words="Les offres où j'ai postulées !"
         delay={0.075}
         className="mx-auto w-10/12 py-6 font-title tracking-wide text-indigo-600  sm:w-9/12 sm:text-xl md:text-2xl lg:text-5xl"
       />
       {/* Passer la fonction de filtrage et les données d'offres */}
       <Filter offers={data} onFilter={handleFilter} />
+      {filteredData.length > 0 && (
+        <OfferCounter
+          offerList={filteredData}
+          className="font-bold italic text-indigo-400"
+        />
+      )}
 
       <ul className="flex flex-col items-center justify-center gap-5 overflow-hidden py-4">
         {filteredData.length === 0 ? (

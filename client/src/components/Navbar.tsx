@@ -6,7 +6,7 @@ const Navbar = () => {
 
   return (
     <div>
-      <ul className="flex w-full items-center justify-evenly bg-amber-400/20 px-3 py-5 font-title">
+      <ul className="flex w-full items-center justify-evenly bg-amber-400/20 p-1 font-title">
         <NavLink
           to="/Applicant-Administrator/"
           className={(nav) =>

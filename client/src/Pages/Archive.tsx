@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import ButtonOffers from "@/components/layout/ButtonOffers";
 import FilterStatus from "@/components/layout/FilterStatus";
 import FindNothingText from "@/components/layout/FindNothingText";
+import OfferCounter from "@/components/layout/OfferCounter";
 import Navbar from "@/components/Navbar";
 import WordFadeIn from "@/components/ui/word-fade-in";
 import CardArchived from "@layout/CardArchived";
@@ -100,6 +101,12 @@ const Archive = () => {
       {/* Composant de filtrage par statut */}
       <FilterStatus onFilter={handleStatusFilter} />
 
+      {filteredData.length > 0 && (
+        <OfferCounter
+          offerList={filteredData}
+          className="font-bold italic text-green-400"
+        />
+      )}
       {/* Affichage des offres filtrées */}
       <ul className="flex h-screen flex-col items-center justify-start gap-5 overflow-hidden py-4">
         {filteredData.length === 0 ? (
