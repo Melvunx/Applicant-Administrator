@@ -124,7 +124,34 @@ export default async function handler(req, res) {
         }
       };
 
-      await sendScheduledEmails();
+      // await sendScheduledEmails();
+
+      const MAX_RETRIES = 3;
+
+      const fetchOffers = async (retryCount = 0) => {
+        try {
+          return await offerModel.find({
+            applyDate: { $lte: oneWeekAgo },
+            archived: false,
+            status: "Envoyé",
+          });
+        } catch (error) {
+          if (retryCount < MAX_RETRIES) {
+            console.log(
+              `Tentative de nouveau... Essai numéro ${retryCount + 1}`
+            );
+            return fetchOffers(retryCount + 1);
+          } else {
+            console.error(
+              "Erreur lors de la récupération des offres : ",
+              error
+            );
+            throw error; // Relancer l'erreur pour que l'appelant puisse gérer
+          }
+        }
+      };
+      const offers = fetchOffers();
+      console.log(offers);
 
       // Envoyer la réponse une fois la tâche exécutée
       res.status(200).json({ message: "Scheduled task executed successfully" });
