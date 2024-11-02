@@ -50,20 +50,33 @@ export default async function handler(req, res) {
           ); // 5 secondes
         });
 
+        const retryFetch = async (retries) => {
+          for (let i = 0; i < retries; i++) {
+            try {
+              return await offerModel
+                .find({
+                  applyDate: { $lte: oneWeekAgo },
+                  archived: false,
+                  status: "Envoyé",
+                })
+                .exec();
+            } catch (error) {
+              console.error(
+                "Erreur de requête, tentative de nouvelle... ",
+                error
+              );
+              await new Promise((res) => setTimeout(res, 2000)); // Attendre 2 secondes avant de réessayer
+            }
+          }
+          throw new Error(
+            "Échec de la récupération des offres après plusieurs tentatives."
+          );
+        };
+
+        console.log("Offres récupérées : ", offers);
+
         try {
-          const offers = await Promise.race([
-            offerModel
-              .find({
-                applyDate: { $lte: oneWeekAgo },
-                archived: false,
-                status: "Envoyé",
-              })
-              .exec(),
-            timeoutPromise,
-          ]);
-
-          console.log("Offres récupérées : ", offers);
-
+          const offers = await retryFetch(3);
           if (offers.length === 0) {
             console.log("Aucune offre trouvée pour l'envoi de mail");
           } else {
