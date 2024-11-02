@@ -22,7 +22,7 @@ const sendMail = async (transporter, mailOptions) => {
 
 //Envoie de tâche planifiée
 const sendScheduledEmails = async () => {
-  console.log("Vérification des offres envoyées il y a une semaine...");
+  // console.log("Vérification des offres envoyées il y a une semaine...");
 
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
