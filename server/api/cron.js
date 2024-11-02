@@ -1,4 +1,3 @@
-const { sendScheduledEmails } = require("../index");
 const nodemailer = require("nodemailer");
 const offerModel = require("./models/offer.models");
 
