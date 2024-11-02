@@ -43,11 +43,13 @@ export default async function handler(req, res) {
 
         console.log("Date de comparaison : ", oneWeekAgo);
 
-        const offers = await offerModel.find({
-          applyDate: { $lte: oneWeekAgo },
-          archived: false,
-          status: "Envoyé",
-        });
+        // const offers = await offerModel.find({
+        //   applyDate: { $lte: oneWeekAgo },
+        //   archived: false,
+        //   status: "Envoyé",
+        // });
+
+        const offers = [];
         console.log("Offres récupérées : ", offers);
         if (offers.length === 0) {
           console.log("Aucune offre trouvée pour l'envoi de mail");
