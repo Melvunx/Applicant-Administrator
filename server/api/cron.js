@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
-import offerModel from "../models/offer.models";
+const nodemailer = require("nodemailer");
+const offerModel = require("../models/offer.models");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
