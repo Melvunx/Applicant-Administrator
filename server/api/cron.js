@@ -31,15 +31,14 @@ const sendScheduledEmails = async () => {
 
   console.log("Date de comparaison : ", oneWeekAgo);
 
+  const offers = await offerModel.find({
+    applyDate: { $lte: oneWeekAgo },
+    archived: false,
+    status: "Envoyé",
+  });
+  console.log("Offres récupérées : ", offers);
+
   try {
-    const offers = await offerModel.find({
-      applyDate: { $lte: oneWeekAgo },
-      archived: false,
-      status: "Envoyé",
-    });
-
-    console.log("Offres récupérées : ", offers);
-
     if (offers.length === 0) {
       console.log("Aucune offre trouvée pour l'envoi de mail");
     } else {
