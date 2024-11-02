@@ -20,13 +20,6 @@ const sendMail = async (transporter, mailOptions) => {
   }
 };
 
-//Vérifier la connexion SMTP
-transporter.verify((error, succes) => {
-  if (error) return console.log("Erreur de connextion SMTP ", error);
-  else if (succes)
-    return console.log("Le serveur SMTP est prêt à prendre nos messages !");
-});
-
 //Envoie de tâche planifiée
 const sendScheduledEmails = async () => {
   console.log("Vérification des offres envoyées il y a une semaine...");
@@ -99,9 +92,18 @@ export default async function handler(req, res) {
     return res.status(401).end("Unauthorized");
   } else if (req.method === "GET") {
     try {
+      // Vérifier la connexion SMTP
+      await transporter.verify();
+
+      console.log("Le serveur SMTP est prêt à prendre nos messages !");
+      
+      // Appeler la fonction d'envoi d'emails
       await sendScheduledEmails();
+
+      // Envoyer la réponse une fois la tâche exécutée
       res.status(200).json({ message: "Scheduled task executed successfully" });
     } catch (error) {
+      console.error("Erreur de connexion SMTP ou d'exécution de la tâche planifiée", error);
       res.status(500).json({
         message: "Error executing scheduled task",
         error: error.message,
@@ -111,3 +113,4 @@ export default async function handler(req, res) {
     res.status(405).json({ message: "Method not allowed" });
   }
 }
+
