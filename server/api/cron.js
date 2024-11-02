@@ -104,7 +104,24 @@ export default async function handler(req, res) {
       console.log("Le serveur SMTP est prêt à prendre nos messages !");
 
       // Appeler la fonction d'envoi d'emails
-      await sendScheduledEmails();
+      const testEmail = async () => {
+        const testMailOptions = {
+          from: process.env.USER_ADDRESS,
+          to: process.env.USER_ADDRESS, // envoyer à votre propre adresse pour le test
+          subject: "Test Email",
+          text: "Ceci est un e-mail de test.",
+        };
+
+        try {
+          await sendMail(transporter, testMailOptions);
+          console.log("Test Email envoyé avec succès !");
+        } catch (error) {
+          console.error("Erreur lors de l'envoi de l'e-mail de test : ", error);
+        }
+      };
+
+      // Appel de la fonction de test
+      await testEmail();
 
       // Envoyer la réponse une fois la tâche exécutée
       res.status(200).json({ message: "Scheduled task executed successfully" });
