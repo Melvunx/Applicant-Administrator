@@ -73,10 +73,10 @@ export default async function handler(req, res) {
           );
         };
 
-        console.log("Offres récupérées : ", offers);
-
         try {
           const offers = await retryFetch(3);
+          console.log("Offres récupérées : ", offers);
+
           if (offers.length === 0) {
             console.log("Aucune offre trouvée pour l'envoi de mail");
           } else {
