@@ -23,75 +23,6 @@ const sendMail = async (transporter, mailOptions) => {
 };
 
 //Envoi de tâche planifiée
-const sendScheduledEmails = async () => {
-  console.log("Vérification des offres envoyées il y a une semaine...");
-
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  console.log("Date de comparaison : ", oneWeekAgo);
-
-  const offers = await offerModel.find({
-    applyDate: { $lte: oneWeekAgo },
-    archived: false,
-    status: "Envoyé",
-  });
-  console.log("Offres récupérées : ", offers);
-
-  try {
-    if (offers.length === 0) {
-      console.log("Aucune offre trouvée pour l'envoi de mail");
-    } else {
-      for (const offer of offers) {
-        console.log("Traitement de l'offre : ", offer.company);
-
-        const relanceMail = {
-          from: {
-            name: "Rappeleur de relance",
-            address: process.env.USER_ADDRESS,
-          },
-          to: [process.env.USER_ADDRESS],
-          subject: `Relance de Candidature - Une semaine depuis ma candidature chez ${offer.company}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;">
-              <h1 style="font-size: 24px; color: #4CAF50;">Bonjour mon Melv,</h1>
-              <p style="font-size: 16px; line-height: 1.6;">
-                Cela fait <strong>une semaine</strong> que tu as postulé chez 
-                <strong>${offer.company}</strong> avec 
-                ${
-                  offer.type === "Candidature spontanée"
-                    ? "<em>une candidature spontanée</em>"
-                    : `l'offre <strong>${offer.title}</strong>`
-                }.
-              </p>
-              <p style="font-size: 16px; line-height: 1.6;">
-                Il est temps de relancer ta candidature en renvoyant un e-mail. Ne perds pas de temps !
-              </p>
-              <div style="margin-top: 20px; text-align: center;">
-                <a href="${
-                  offer.url
-                }" style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-size: 16px;">Voir l'offre</a>
-              </div>
-              <br/>
-              <p style="font-size: 16px; line-height: 1.6;">
-                Cordialement,<br/>
-                Toi même.<br/>
-              </p>
-            </div>
-          `,
-        };
-
-        // Enlever `await` pour tester s'il s'agit d'un blocage ici
-        await sendMail(transporter, relanceMail);
-        console.log(
-          `L'email de relance pour l'entreprise ${offer.company} a bien été envoyé !`
-        );
-      }
-    }
-  } catch (error) {
-    console.error("Erreur lors de la vérification des offres : ", error);
-  }
-};
 
 export default async function handler(req, res) {
   if (req.headers["authorization"] !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -104,24 +35,76 @@ export default async function handler(req, res) {
       console.log("Le serveur SMTP est prêt à prendre nos messages !");
 
       // Appeler la fonction d'envoi d'emails
-      const testEmail = async () => {
-        const testMailOptions = {
-          from: process.env.USER_ADDRESS,
-          to: process.env.USER_ADDRESS, // envoyer à votre propre adresse pour le test
-          subject: "Test Email",
-          text: "Ceci est un e-mail de test.",
-        };
+      const sendScheduledEmails = async () => {
+        console.log("Vérification des offres envoyées il y a une semaine...");
+
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        console.log("Date de comparaison : ", oneWeekAgo);
 
         try {
-          await sendMail(transporter, testMailOptions);
-          console.log("Test Email envoyé avec succès !");
+          const offers = await offerModel.find({
+            applyDate: { $lte: oneWeekAgo },
+            archived: false,
+            status: "Envoyé",
+          });
+          console.log("Offres récupérées : ", offers);
+          if (offers.length === 0) {
+            console.log("Aucune offre trouvée pour l'envoi de mail");
+          } else {
+            for (const offer of offers) {
+              console.log("Traitement de l'offre : ", offer.company);
+
+              const relanceMail = {
+                from: {
+                  name: "Rappeleur de relance",
+                  address: process.env.USER_ADDRESS,
+                },
+                to: process.env.USER_ADDRESS,
+                subject: `Relance de Candidature - Une semaine depuis ma candidature chez ${offer.company}`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;">
+                    <h1 style="font-size: 24px; color: #4CAF50;">Bonjour mon Melv,</h1>
+                    <p style="font-size: 16px; line-height: 1.6;">
+                      Cela fait <strong>une semaine</strong> que tu as postulé chez 
+                      <strong>${offer.company}</strong> avec 
+                      ${
+                        offer.type === "Candidature spontanée"
+                          ? "<em>une candidature spontanée</em>"
+                          : `l'offre <strong>${offer.title}</strong>`
+                      }.
+                    </p>
+                    <p style="font-size: 16px; line-height: 1.6;">
+                      Il est temps de relancer ta candidature en renvoyant un e-mail. Ne perds pas de temps !
+                    </p>
+                    <div style="margin-top: 20px; text-align: center;">
+                      <a href="${
+                        offer.url
+                      }" style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-size: 16px;">Voir l'offre</a>
+                    </div>
+                    <br/>
+                    <p style="font-size: 16px; line-height: 1.6;">
+                      Cordialement,<br/>
+                      Toi même.<br/>
+                    </p>
+                  </div>
+                `,
+              };
+
+              // Enlever `await` pour tester s'il s'agit d'un blocage ici
+              await sendMail(transporter, relanceMail);
+              console.log(
+                `L'email de relance pour l'entreprise ${offer.company} a bien été envoyé !`
+              );
+            }
+          }
         } catch (error) {
-          console.error("Erreur lors de l'envoi de l'e-mail de test : ", error);
+          console.error("Erreur lors de la vérification des offres : ", error);
         }
       };
 
-      // Appel de la fonction de test
-      await testEmail();
+      await sendScheduledEmails();
 
       // Envoyer la réponse une fois la tâche exécutée
       res.status(200).json({ message: "Scheduled task executed successfully" });
