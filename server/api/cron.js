@@ -22,10 +22,12 @@ const sendMail = async (transporter, mailOptions) => {
 
 //Envoie de tâche planifiée
 const sendScheduledEmails = async () => {
-  // console.log("Vérification des offres envoyées il y a une semaine...");
+  console.log("Vérification des offres envoyées il y a une semaine...");
 
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  console.log(oneWeekAgo);
 
   try {
     const offers = await offerModel.find({
@@ -88,31 +90,22 @@ const sendScheduledEmails = async () => {
 };
 
 export default async function handler(req, res) {
-  if (req.headers["authorization"] !== `Bearer ${process.env.CRON_SECRET}`) {
-    return res.status(401).end("Unauthorized");
-  } else if (req.method === "GET") {
-    try {
-      // Vérifier la connexion SMTP
-      await transporter.verify();
+  try {
+    // Vérifier la connexion SMTP
+    await transporter.verify();
 
-      console.log("Le serveur SMTP est prêt à prendre nos messages !");
+    console.log("Le serveur SMTP est prêt à prendre nos messages !");
 
-      // Appeler la fonction d'envoi d'emails
-      await sendScheduledEmails();
-
-      // Envoyer la réponse une fois la tâche exécutée
-      res.status(200).json({ message: "Scheduled task executed successfully" });
-    } catch (error) {
-      console.error(
-        "Erreur de connexion SMTP ou d'exécution de la tâche planifiée",
-        error
-      );
-      res.status(500).json({
-        message: "Error executing scheduled task",
-        error: error.message,
-      });
-    }
-  } else {
-    res.status(405).json({ message: "Method not allowed" });
+    // Appeler la fonction d'envoi d'emails
+    await sendScheduledEmails();
+  } catch (error) {
+    console.error(
+      "Erreur de connexion SMTP ou d'exécution de la tâche planifiée",
+      error
+    );
+    res.status(500).json({
+      message: "Error executing scheduled task",
+      error: error.message,
+    });
   }
 }
