@@ -128,15 +128,17 @@ export default async function handler(req, res) {
 
       const fetchData = async () => {
         try {
-          const offers = offerModel.find({ archived: false, status: "Envoyé" });
+          // Attendre que la requête s'exécute et récupère les données
+          const offers = await offerModel.find({ archived: false, status: "Envoyé" }).exec();
           console.log("Toutes les offres : ", offers);
-          console.log((await offers).length);
+          console.log("Nombre d'offres : ", offers.length);
         } catch (error) {
           console.error("Erreur lors de la récupération des offres : ", error);
         }
       };
-
+      
       fetchData();
+      
 
       // Envoyer la réponse une fois la tâche exécutée
       res.status(200).json({ message: "Scheduled task executed successfully" });
