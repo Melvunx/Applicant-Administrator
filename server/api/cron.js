@@ -1,9 +1,7 @@
-import { sendScheduledEmails } from "../index";
+import { sendScheduledEmails } from "..";
 
 export default async function handler(req, res) {
-  if (
-    req.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
+  if (req.headers["authorization"] !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).end("Unauthorized");
   } else if (req.method === "GET") {
     await sendScheduledEmails();
