@@ -131,7 +131,6 @@ export default async function handler(req, res) {
       const fetchOffers = async (retryCount = 0) => {
         try {
           return await offerModel.find({
-            applyDate: { $lte: oneWeekAgo },
             archived: false,
             status: "Envoyé",
           });
