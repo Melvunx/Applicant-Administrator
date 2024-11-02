@@ -1,4 +1,4 @@
-import { sendScheduledEmails } from "../index";
+const sendScheduledEmails = require("../index");
 
 export default async function handler(req, res) {
   if (req.headers["authorization"] !== `Bearer ${process.env.CRON_SECRET}`) {
