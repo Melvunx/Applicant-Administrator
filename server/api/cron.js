@@ -51,7 +51,8 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: "Aucune offre à relancer." });
       }
 
-      for (const offer of offers) {
+      // Créez un tableau de promesses d'envoi d'email
+      const emailPromises = offers.map(async (offer) => {
         console.log("Traitement de l'offre : ", offer.company);
 
         const relanceMail = {
@@ -94,7 +95,15 @@ export default async function handler(req, res) {
         console.log(
           `L'email de relance pour l'entreprise ${offer.company} a bien été envoyé !`
         );
-      }
+      });
+
+      // Attendre que tous les emails aient été envoyés
+      await Promise.all(emailPromises);
+
+      // Envoyer la réponse une fois que les emails ont été envoyés
+      res
+        .status(200)
+        .json({ message: "Emails de relance envoyés avec succès." });
 
       // Envoyer la réponse une fois que les emails ont été envoyés
       res
