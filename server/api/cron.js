@@ -38,7 +38,7 @@ const sendScheduledEmails = async () => {
       console.log("Aucune offre trouvée pour l'envoi de mail");
     } else {
       for (const offer of offers) {
-        console.log("Offres envoyées il y a une semaine : ", offer);
+        console.log("Offres envoyées il y a une semaine : ", offers.length);
 
         const relanceMail = {
           from: {
@@ -96,14 +96,17 @@ export default async function handler(req, res) {
       await transporter.verify();
 
       console.log("Le serveur SMTP est prêt à prendre nos messages !");
-      
+
       // Appeler la fonction d'envoi d'emails
       await sendScheduledEmails();
 
       // Envoyer la réponse une fois la tâche exécutée
       res.status(200).json({ message: "Scheduled task executed successfully" });
     } catch (error) {
-      console.error("Erreur de connexion SMTP ou d'exécution de la tâche planifiée", error);
+      console.error(
+        "Erreur de connexion SMTP ou d'exécution de la tâche planifiée",
+        error
+      );
       res.status(500).json({
         message: "Error executing scheduled task",
         error: error.message,
@@ -113,4 +116,3 @@ export default async function handler(req, res) {
     res.status(405).json({ message: "Method not allowed" });
   }
 }
-
