@@ -68,10 +68,10 @@ export default async function handler(req, res) {
           }
         };
 
-        if (offers.length === 0) {
+        if (fetchOffers.length === 0) {
           console.log("Aucune offre trouvée pour l'envoi de mail");
         } else {
-          for (const offer of offers) {
+          for (const offer of fetchOffers) {
             console.log("Traitement de l'offre : ", offer.company);
 
             const relanceMail = {
