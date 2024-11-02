@@ -126,7 +126,7 @@ export default async function handler(req, res) {
 
 const fetchOffers = async () => {
   try {
-    const offers = await offerModel.find().sort({ createdAt: -1 }).exec();
+    const offers = await offerModel.find().lean().exec();
     console.log("Offres récupérées : ", offers);
   } catch (error) {
     console.error("Erreur lors de la récupération des offres : ", error);
