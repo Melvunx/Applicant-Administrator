@@ -3,6 +3,19 @@ const offerModel = require("../models/offer.models");
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
 
+async function connectToDatabase() {
+  try {
+    // Remplacez par votre URI de connexion
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+    });
+    console.log("Connexion à MongoDB réussie !");
+  } catch (error) {
+    console.error("Erreur de connexion à MongoDB :", error);
+    throw new Error("Connexion à la base de données échouée");
+  }
+}
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
@@ -29,6 +42,9 @@ export default async function handler(req, res) {
     return res.status(401).end("Unauthorized");
   } else if (req.method === "GET") {
     try {
+      // Connexion à la base de données
+      await connectToDatabase();
+
       // Vérifier la connexion SMTP
       await transporter.verify();
       console.log("Le serveur SMTP est prêt à prendre nos messages !");
@@ -106,11 +122,6 @@ export default async function handler(req, res) {
       res
         .status(200)
         .json({ message: "Emails de relance envoyés avec succès." });
-
-      // Envoyer la réponse une fois que les emails ont été envoyés
-      res
-        .status(200)
-        .json({ message: "Emails de relance envoyés avec succès." });
     } catch (error) {
       console.error(
         "Erreur lors de l'exécution de la tâche planifiée :",
@@ -125,26 +136,3 @@ export default async function handler(req, res) {
     res.status(405).json({ message: "Method not allowed" });
   }
 }
-
-async function testConnection() {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Connexion à MongoDB réussie !");
-
-    // Essayez de récupérer les offres
-    const offers = await offerModel.find().lean().exec();
-    console.log("Offres récupérées :", offers);
-  } catch (error) {
-    console.error(
-      "Erreur lors de la connexion ou de la récupération des offres :",
-      error
-    );
-  } finally {
-    mongoose.disconnect(); // Déconnectez-vous après le test
-  }
-}
-
-testConnection();
