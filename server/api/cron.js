@@ -5,9 +5,10 @@ mongoose.set("debug", true);
 
 async function connectToDatabase() {
   try {
-    // Remplacez par votre URI de connexion
     await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 10000,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 20000, // 20 secondes
     });
     console.log("Connexion à MongoDB réussie !");
   } catch (error) {
@@ -15,27 +16,6 @@ async function connectToDatabase() {
     throw new Error("Connexion à la base de données échouée");
   }
 }
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.USER_ADDRESS,
-    pass: process.env.PASS_ADDRESS,
-  },
-});
-
-const sendMail = async (transporter, mailOptions) => {
-  try {
-    console.log("Tentative d'envoi d'un email...");
-    await transporter.sendMail(mailOptions);
-    console.log("Email envoyé avec succès !");
-  } catch (error) {
-    console.error("Une erreur est survenue lors de l'envoi du mail ! ", error);
-  }
-};
 
 export default async function handler(req, res) {
   if (req.headers["authorization"] !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -131,6 +111,10 @@ export default async function handler(req, res) {
         message: "Erreur lors de l'exécution de la tâche planifiée.",
         error: error.message,
       });
+    } finally {
+      // Déconnexion de la base de données
+      await mongoose.disconnect();
+      console.log("Déconnexion de MongoDB réussie !");
     }
   } else {
     res.status(405).json({ message: "Method not allowed" });
