@@ -6,9 +6,7 @@ mongoose.set("debug", true);
 async function connectToDatabase() {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 20000, // 20 secondes
+      serverSelectionTimeoutMS: 10000,
     });
     console.log("Connexion à MongoDB réussie !");
   } catch (error) {
@@ -17,19 +15,38 @@ async function connectToDatabase() {
   }
 }
 
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.USER_ADDRESS,
+    pass: process.env.PASS_ADDRESS,
+  },
+});
+
+const sendMail = async (transporter, mailOptions) => {
+  try {
+    console.log("Tentative d'envoi d'un email...");
+    await transporter.sendMail(mailOptions);
+    console.log("Email envoyé avec succès !");
+  } catch (error) {
+    console.error("Une erreur est survenue lors de l'envoi du mail ! ", error);
+  }
+};
+
 export default async function handler(req, res) {
   if (req.headers["authorization"] !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).end("Unauthorized");
   } else if (req.method === "GET") {
     try {
-      // Connexion à la base de données
       await connectToDatabase();
 
       // Vérifier la connexion SMTP
       await transporter.verify();
       console.log("Le serveur SMTP est prêt à prendre nos messages !");
 
-      // Récupération des offres
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
       console.log("Date de comparaison : ", oneWeekAgo);
@@ -112,7 +129,6 @@ export default async function handler(req, res) {
         error: error.message,
       });
     } finally {
-      // Déconnexion de la base de données
       await mongoose.disconnect();
       console.log("Déconnexion de MongoDB réussie !");
     }
