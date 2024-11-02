@@ -126,31 +126,17 @@ export default async function handler(req, res) {
 
       // await sendScheduledEmails();
 
-      const MAX_RETRIES = 3;
-
-      const fetchOffers = async (retryCount = 0) => {
+      const fetchData = async () => {
         try {
-          return await offerModel.find({
-            archived: false,
-            status: "Envoyé",
-          });
+          const offers = offerModel.find({ archived: false, status: "Envoyé" });
+          console.log("Toutes les offres : ", offers);
+          console.log((await offers).length);
         } catch (error) {
-          if (retryCount < MAX_RETRIES) {
-            console.log(
-              `Tentative de nouveau... Essai numéro ${retryCount + 1}`
-            );
-            return fetchOffers(retryCount + 1);
-          } else {
-            console.error(
-              "Erreur lors de la récupération des offres : ",
-              error
-            );
-            throw error; // Relancer l'erreur pour que l'appelant puisse gérer
-          }
+          console.error("Erreur lors de la récupération des offres : ", error);
         }
       };
-      const offers = fetchOffers();
-      console.log(offers);
+
+      fetchData();
 
       // Envoyer la réponse une fois la tâche exécutée
       res.status(200).json({ message: "Scheduled task executed successfully" });
