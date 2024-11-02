@@ -43,13 +43,6 @@ export default async function handler(req, res) {
 
         console.log("Date de comparaison : ", oneWeekAgo);
 
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(
-            () => reject(new Error("La requête a dépassé le temps imparti")),
-            5000
-          ); // 5 secondes
-        });
-
         const retryFetch = async (retries) => {
           for (let i = 0; i < retries; i++) {
             try {
