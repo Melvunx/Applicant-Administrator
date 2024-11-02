@@ -123,3 +123,14 @@ export default async function handler(req, res) {
     res.status(405).json({ message: "Method not allowed" });
   }
 }
+
+const fetchOffers = async () => {
+  try {
+    const offers = await offerModel.find().sort({ createdAt: -1 }).exec();
+    console.log("Offres récupérées : ", offers);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des offres : ", error);
+  }
+};
+
+fetchOffers();
