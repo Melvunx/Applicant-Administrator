@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const offerModel = require("../models/offer.models");
 
@@ -125,26 +124,13 @@ export default async function handler(req, res) {
   }
 }
 
-async function testConnection() {
+const fetchOffers = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 20000,
-    });
-    console.log("Connexion à MongoDB réussie !");
-
-    // Essayez de récupérer les offres
-    const offers = await offerModel.find().exec();
-    console.log("Offres récupérées :", offers);
+    const offers = await offerModel.find().sort({ createdAt: -1 }).exec();
+    console.log("Offres récupérées : ", offers);
   } catch (error) {
-    console.error(
-      "Erreur lors de la connexion ou de la récupération des offres :",
-      error
-    );
-  } finally {
-    mongoose.disconnect(); // Déconnectez-vous après le test
+    console.error("Erreur lors de la récupération des offres : ", error);
   }
-}
+};
 
-testConnection();
+fetchOffers();
