@@ -1,5 +1,7 @@
 const nodemailer = require("nodemailer");
 const offerModel = require("../models/offer.models");
+const mongoose = require("mongoose");
+mongoose.set("debug", true);
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -124,13 +126,25 @@ export default async function handler(req, res) {
   }
 }
 
-const fetchOffers = async () => {
+async function testConnection() {
   try {
-    const offers = await offerModel.find().lean().exec();
-    console.log("Offres récupérées : ", offers);
-  } catch (error) {
-    console.error("Erreur lors de la récupération des offres : ", error);
-  }
-};
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Connexion à MongoDB réussie !");
 
-fetchOffers();
+    // Essayez de récupérer les offres
+    const offers = await offerModel.find().lean().exec();
+    console.log("Offres récupérées :", offers);
+  } catch (error) {
+    console.error(
+      "Erreur lors de la connexion ou de la récupération des offres :",
+      error
+    );
+  } finally {
+    mongoose.disconnect(); // Déconnectez-vous après le test
+  }
+}
+
+testConnection();
