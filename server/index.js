@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config({ path: "./.env" });
@@ -23,3 +22,4 @@ app.listen(process.env.PORT || 3000, (err) => {
 app.get("/", (req, res) => {
   res.send("Hello World !");
 });
+
