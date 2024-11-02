@@ -43,14 +43,31 @@ export default async function handler(req, res) {
 
         console.log("Date de comparaison : ", oneWeekAgo);
 
-        // const offers = await offerModel.find({
-        //   applyDate: { $lte: oneWeekAgo },
-        //   archived: false,
-        //   status: "Envoyé",
-        // });
+        const MAX_RETRIES = 3;
 
-        const offers = [];
-        console.log("Offres récupérées : ", offers);
+        const fetchOffers = async (retryCount = 0) => {
+          try {
+            return await offerModel.find({
+              applyDate: { $lte: oneWeekAgo },
+              archived: false,
+              status: "Envoyé",
+            });
+          } catch (error) {
+            if (retryCount < MAX_RETRIES) {
+              console.log(
+                `Tentative de nouveau... Essai numéro ${retryCount + 1}`
+              );
+              return fetchOffers(retryCount + 1);
+            } else {
+              console.error(
+                "Erreur lors de la récupération des offres : ",
+                error
+              );
+              throw error; // Relancer l'erreur pour que l'appelant puisse gérer
+            }
+          }
+        };
+
         if (offers.length === 0) {
           console.log("Aucune offre trouvée pour l'envoi de mail");
         } else {
