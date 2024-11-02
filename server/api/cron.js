@@ -14,20 +14,22 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = async (transporter, mailOptions) => {
   try {
+    console.log("Tentative d'envoi d'un email...");
     await transporter.sendMail(mailOptions);
+    console.log("Email envoyé avec succès !");
   } catch (error) {
-    console.error("Une erreur est survenue lors de l'envoie du mail ! ", error);
+    console.error("Une erreur est survenue lors de l'envoi du mail ! ", error);
   }
 };
 
-//Envoie de tâche planifiée
+//Envoi de tâche planifiée
 const sendScheduledEmails = async () => {
   console.log("Vérification des offres envoyées il y a une semaine...");
 
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-  console.log(oneWeekAgo);
+  console.log("Date de comparaison : ", oneWeekAgo);
 
   try {
     const offers = await offerModel.find({
@@ -36,11 +38,13 @@ const sendScheduledEmails = async () => {
       status: "Envoyé",
     });
 
+    console.log("Offres récupérées : ", offers);
+
     if (offers.length === 0) {
       console.log("Aucune offre trouvée pour l'envoi de mail");
     } else {
       for (const offer of offers) {
-        console.log("Offres envoyées il y a une semaine : ", offers.length);
+        console.log("Traitement de l'offre : ", offer.company);
 
         const relanceMail = {
           from: {
@@ -78,6 +82,7 @@ const sendScheduledEmails = async () => {
           `,
         };
 
+        // Enlever `await` pour tester s'il s'agit d'un blocage ici
         await sendMail(transporter, relanceMail);
         console.log(
           `L'email de relance pour l'entreprise ${offer.company} a bien été envoyé !`
@@ -90,22 +95,31 @@ const sendScheduledEmails = async () => {
 };
 
 export default async function handler(req, res) {
-  try {
-    // Vérifier la connexion SMTP
-    await transporter.verify();
+  if (req.headers["authorization"] !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).end("Unauthorized");
+  } else if (req.method === "GET") {
+    try {
+      // Vérifier la connexion SMTP
+      await transporter.verify();
 
-    console.log("Le serveur SMTP est prêt à prendre nos messages !");
+      console.log("Le serveur SMTP est prêt à prendre nos messages !");
 
-    // Appeler la fonction d'envoi d'emails
-    await sendScheduledEmails();
-  } catch (error) {
-    console.error(
-      "Erreur de connexion SMTP ou d'exécution de la tâche planifiée",
-      error
-    );
-    res.status(500).json({
-      message: "Error executing scheduled task",
-      error: error.message,
-    });
+      // Appeler la fonction d'envoi d'emails
+      await sendScheduledEmails();
+
+      // Envoyer la réponse une fois la tâche exécutée
+      res.status(200).json({ message: "Scheduled task executed successfully" });
+    } catch (error) {
+      console.error(
+        "Erreur de connexion SMTP ou d'exécution de la tâche planifiée",
+        error
+      );
+      res.status(500).json({
+        message: "Error executing scheduled task",
+        error: error.message,
+      });
+    }
+  } else {
+    res.status(405).json({ message: "Method not allowed" });
   }
 }
