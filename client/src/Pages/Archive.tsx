@@ -108,7 +108,7 @@ const Archive = () => {
         />
       )}
       {/* Affichage des offres filtrées */}
-      <ul className="flex h-screen flex-col items-center justify-start gap-5 overflow-hidden py-4">
+      <ul className="flex min-h-screen flex-col items-center justify-start gap-5 overflow-hidden py-4">
         {filteredData.length === 0 ? (
           <FindNothingText offerPage="archivée" />
         ) : (
