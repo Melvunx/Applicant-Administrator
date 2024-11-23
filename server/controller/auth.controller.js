@@ -53,12 +53,6 @@ module.exports.userLogout = (req, res) => {
   req.logout((error) => {
     if (error) return res.status(500).send({ message: "Logout failed", error });
 
-    console.log({
-      session: req.session,
-      sessionID: req.session.id,
-      user,
-    });
-
     req.session.destroy((sessionError) => {
       if (sessionError)
         return res

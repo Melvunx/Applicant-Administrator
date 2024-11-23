@@ -39,7 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/offers", offerRoutes);
 
-app.listen(process.env.PORT || 3000, (err) => {
+app.listen(PORT || 3000, (err) => {
   if (err) {
     console.error("Failed to start the server:", err);
   } else {
