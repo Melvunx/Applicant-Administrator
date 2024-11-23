@@ -31,10 +31,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-const offerRoutes = require("./routes/applicant.routes");
 const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
+const offerRoutes = require("./routes/applicant.routes");
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/offers", offerRoutes);
 
 app.listen(process.env.PORT || 3000, (err) => {

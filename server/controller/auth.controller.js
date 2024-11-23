@@ -45,3 +45,31 @@ module.exports.userRegister = async (req, res) => {
     res.status(500).send({ message: "Caught error", error });
   }
 };
+
+module.exports.userLogout = (req, res) => {
+  const user = req.cookies.userData;
+  if (!user) return res.status(401).send({ message: "User not found" });
+
+  req.logout((error) => {
+    if (error) return res.status(500).send({ message: "Logout failed", error });
+
+    console.log({
+      session: req.session,
+      sessionID: req.session.id,
+      user,
+    });
+
+    req.session.destroy((sessionError) => {
+      if (sessionError)
+        return res
+          .status(500)
+          .send({ message: "Session destruction failed", error: sessionError });
+
+      res.clearCookie("userData");
+      console.log(`User ${user.username} logged out !`);
+      return res
+        .status(200)
+        .send({ message: `User ${user.username} logged out successfully` });
+    });
+  });
+};
