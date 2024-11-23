@@ -7,10 +7,10 @@ const {
   deleteOffer,
 } = require("../controller/offer.controller");
 
-router.get("/offers", getOffers);
+router.get("/", getOffers);
 router.post("/addOffer", addOffer);
-router.put("/offers/:id/archive", toggleArchiveOffer);
-router.put("/offers/:id/status", modifyStatus);
-router.delete("/offers/archive/:id", deleteOffer);
+router.put("/:id/archive", toggleArchiveOffer);
+router.put("/:id/status", modifyStatus);
+router.delete("/archive/:id", deleteOffer);
 
 module.exports = router;

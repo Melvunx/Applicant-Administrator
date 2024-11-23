@@ -12,9 +12,8 @@ module.exports.getOffers = async (req, res) => {
 module.exports.addOffer = async (req, res) => {
   const { title, type, company, url, applyDate, status } = req.body;
 
-  if (!type || !company || !url || !applyDate) {
+  if (!type || !company || !url || !applyDate)
     return res.status(400).json({ error: "Tous les champs sont obligatoires" });
-  }
 
   // Si le type est "Candidature sur offre", le titre doit être présent
   if (type === "Candidature sur offre" && !title) {
