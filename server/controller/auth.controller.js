@@ -33,7 +33,6 @@ module.exports.userRegister = async (req, res) => {
       firstname,
       lastname,
       birthdate,
-      
     });
 
     const savedUser = await newUser.save();
