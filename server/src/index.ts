@@ -23,6 +23,9 @@ app.use(
   })
 );
 
+app.use("/api/auth", require("@routes/auth.routes"));
+app.use("/api/offers", require("@routes/offer.routes"));
+
 app.listen(PORT, () => {
   console.log(
     colors.info(`\nServer running on port http://localhost:${Number(PORT)}`)
