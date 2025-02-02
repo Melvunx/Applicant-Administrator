@@ -1,18 +1,11 @@
 import userAuthStore from "@/api/auth";
 import fetchApi from "@/api/fetch";
-import { User } from "@/schema/user.schema";
+import { UserResponse, UserResponseSchema } from "@/schema/user.schema";
 import { useCallback } from "react";
 
 export function useAuth() {
   const { setUser, setIsAuthenticated, setAccessToken, clearAuth } =
     userAuthStore();
-
-  // const login = useCallback(
-  //   (email: string, password: string) => {
-  //     fetchApi<User>("/login", { payload: { email, password } }).then(setUser);
-  //   },
-  //   [setUser]
-  // );
 
   const refreshToken = useCallback(async () => {
     try {
@@ -20,21 +13,43 @@ export function useAuth() {
         "/auth/refresh-token",
         { method: "POST" }
       );
+
       setAccessToken(response.accessToken);
+
+      console.log("token send successful");
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login failed: ", error);
       setAccessToken(null);
     }
   }, [setAccessToken]);
 
+  const checkAuth = useCallback(async () => {
+    try {
+      const response = await fetchApi<UserResponse>("/auth/check-auth");
+      const user = UserResponseSchema.parse(response);
+
+      setUser(user);
+      setIsAuthenticated(true);
+
+      console.log("Check successfull");
+    } catch (error) {
+      console.error("Check auth failed : ", error);
+      setIsAuthenticated(false);
+    }
+  }, [setUser, setIsAuthenticated]);
+
   const login = useCallback(
     async (email: string, password: string) => {
       try {
-        const user = await fetchApi<User>("/auth/login", {
+        const response = await fetchApi<UserResponse>("/auth/login", {
           payload: { email, password },
         });
+
+        const user = UserResponseSchema.parse(response);
+
         setUser(user);
         setIsAuthenticated(true);
+
         console.log("Login successful");
       } catch (error) {
         console.error("Login failed:", error);
@@ -46,13 +61,21 @@ export function useAuth() {
   );
 
   const logout = useCallback(async () => {
-    await fetchApi<string>("/auth/logout");
-    clearAuth();
+    try {
+      await fetchApi<string>("/auth/logout");
+
+      clearAuth();
+
+      console.log("Logout successful");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   }, [clearAuth]);
 
   return {
     login,
-    refreshToken,
     logout,
+    checkAuth,
+    refreshToken,
   };
 }

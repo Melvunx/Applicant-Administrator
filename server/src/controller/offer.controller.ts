@@ -1,5 +1,6 @@
+import { UserCookie } from "@/schema/user.schema";
 import { prisma } from "@config/prisma";
-import { Offer, User } from "@prisma/client";
+import { Offer } from "@prisma/client";
 import apiReponse from "@services/api.services";
 import isArrayOrIsEmpty from "@utils/isArrayOrIsEmpty";
 import { RequestHandler, Response } from "express";
@@ -84,7 +85,7 @@ export const getSerachedOffer: RequestHandler<
 
 export const createOffer: RequestHandler<{}, {}, Offer> = async (req, res) => {
   try {
-    const user: User = req.cookies["info"];
+    const user: UserCookie | undefined = req.cookies["info"];
 
     const {
       title,
@@ -129,7 +130,7 @@ export const updateOffer: RequestHandler<
 > = async (req, res) => {
   try {
     const { offerId } = req.params;
-    const user: User = req.cookies["info"];
+    const user: UserCookie | undefined = req.cookies["info"];
 
     const {
       title,

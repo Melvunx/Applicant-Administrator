@@ -4,6 +4,7 @@ import {
   verifyToken,
 } from "@/config/jsonwebtoken";
 import { prisma } from "@/config/prisma";
+import { UserCookie } from "@/schema/user.schema";
 import { Session, User } from "@prisma/client";
 import apiReponse from "@services/api.services";
 import bcrypt from "bcrypt";
@@ -146,7 +147,7 @@ export const login: RequestHandler<
 
     res.cookie(
       "info",
-      { id: user.id, username: user.username, email },
+      { id: user.id, username: user.username, email, role: user.role },
       {
         httpOnly: true,
         maxAge: 14 * 24 * 60 * 60 * 1000,
@@ -156,7 +157,7 @@ export const login: RequestHandler<
     return apiReponse.success(
       res,
       "Ok",
-      user,
+      { id: user.id, username: user.username, email, role: user.role },
       `User ${user.username} logged in successfully`
     );
   } catch (error) {
@@ -166,7 +167,7 @@ export const login: RequestHandler<
 
 export const refreshToken: RequestHandler = async (req, res) => {
   try {
-    const token = req.cookies.refreshJwt;
+    const token: string | undefined = req.cookies.refreshJwt;
 
     if (!token)
       return apiReponse.error(res, "Not Found", new Error("Token not found"));
@@ -174,7 +175,7 @@ export const refreshToken: RequestHandler = async (req, res) => {
     const decoded = await verifyToken<{ userId: string }>(token);
 
     if (!decoded)
-      return apiReponse.error(res, "Bad Request", new Error("Invalid token"));
+      return apiReponse.error(res, "Forbidden", new Error("Invalid token"));
 
     const newAccessToken = generateAccessToken(decoded.userId);
 
@@ -184,17 +185,40 @@ export const refreshToken: RequestHandler = async (req, res) => {
   }
 };
 
+export const auth: RequestHandler = async (req, res) => {
+  try {
+    const user: UserCookie | undefined = req.cookies["info"];
+
+    if (!user)
+      return apiReponse.error(
+        res,
+        "Unauthorized",
+        new Error("Token or User not found")
+      );
+
+    return apiReponse.success(res, "Ok", user, "User is authenticated");
+  } catch (error) {
+    return apiReponse.error(res, "Internal Server Error", error);
+  }
+};
+
 export const logout: RequestHandler = async (req, res) => {
   try {
-    const session: Session = req.cookies["refreshJwt"];
-    const user: User = req.cookies["info"];
+    const token: string | undefined = req.cookies["refreshJwt"];
+    const user: UserCookie | undefined = req.cookies["info"];
 
-    if (!session || !user)
+    if (!token || !user)
       return apiReponse.error(
         res,
         "Not Found",
         new Error("Session or User not found")
       );
+
+    const session = await prisma.session.findFirstOrThrow({
+      where: {
+        userId: user.id,
+      },
+    });
 
     await prisma.session.delete({
       where: {

@@ -1,5 +1,6 @@
 import { authenticate } from "@/middleware/authentication";
 import {
+  auth,
   login,
   logout,
   refreshToken,
@@ -15,5 +16,7 @@ router.post("/login", login);
 router.post("/logout", authenticate, logout);
 
 router.post("/refresh-token", refreshToken);
+
+router.get("/check-auth", authenticate, auth);
 
 module.exports = router;

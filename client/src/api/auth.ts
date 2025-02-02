@@ -1,12 +1,12 @@
-import { User } from "@/schema/user.schema";
+import { UserResponse } from "@/schema/user.schema";
 import { create } from "zustand";
 
 type AuthStore = {
   accessToken: string | null;
-  user: User | null;
+  user: UserResponse | null;
   isAuthenticated: boolean | null;
   setAccessToken: (token: string | null) => void;
-  setUser: (user: User | null) => void;
+  setUser: (user: UserResponse | null) => void;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   clearAuth: () => void;
 };
