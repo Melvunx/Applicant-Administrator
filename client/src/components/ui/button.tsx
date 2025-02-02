@@ -15,6 +15,14 @@ type ButtonVariant =
 
 type ButtonSize = "btn-xs" | "btn-sm" | "btn-lg" | "btn-xl";
 
+type LoadingVariant =
+  | "loading-spinner"
+  | "loading-dots"
+  | "loading-ring"
+  | "loading-ball"
+  | "loading-bars"
+  | "loading-infinity";
+
 type ButtonProps = {
   children?: ReactNode;
   onClick?: () => void;
@@ -24,6 +32,7 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   loading?: boolean;
+  loadingVariant?: LoadingVariant;
 };
 
 export default function Button({
@@ -31,6 +40,7 @@ export default function Button({
   onClick,
   className,
   variant = "btn-neutral",
+  loadingVariant = "loading-spinner",
   size,
   type = "button",
   disabled = false,
@@ -55,7 +65,7 @@ export default function Button({
       {loading ? (
         <div className="flex items-center gap-2">
           {children}
-          <span className="loading loading-spinner"></span>
+          <span className={clsx("loading", loadingVariant)}></span>
         </div>
       ) : (
         children
