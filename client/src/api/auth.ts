@@ -19,7 +19,7 @@ const userAuthStore = create<AuthStore>((set) => ({
   setUser: (user) => set({ user }),
   setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
   clearAuth: () =>
-    set({ accessToken: null, user: null, isAuthenticated: null }),
+    set({ accessToken: null, user: null, isAuthenticated: false }),
 }));
 
 export default userAuthStore;

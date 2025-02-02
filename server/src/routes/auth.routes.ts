@@ -14,6 +14,6 @@ router.post("/login", login);
 
 router.post("/logout", authenticate, logout);
 
-router.get("/refreshToken", refreshToken);
+router.post("/refresh-token", refreshToken);
 
 module.exports = router;

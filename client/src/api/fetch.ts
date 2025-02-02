@@ -34,7 +34,7 @@ const fetchApi = async <T>(
     return json.data as T;
   }
 
-  return json;
+  return json.message as T;
 };
 
 export default fetchApi;
