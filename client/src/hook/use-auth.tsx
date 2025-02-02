@@ -1,22 +1,35 @@
 import userAuthStore from "@/api/auth";
-import fetchApi from "@/api/fetch";
+import fetchApi, { ApiError } from "@/api/fetch";
 import { UserResponse, UserResponseSchema } from "@/schema/user.schema";
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function useAuth() {
+  const navigate = useNavigate();
   const { setUser, setIsAuthenticated, setAccessToken, clearAuth } =
     userAuthStore();
 
   const refreshToken = useCallback(async () => {
     try {
-      const response = await fetchApi<{ accessToken: string }>(
-        "/auth/refresh-token",
-        { method: "POST" }
+      const response = await fetch(
+        "http://localhost:3000/api/auth/refresh-token",
+        {
+          method: "POST",
+          credentials: "include",
+        }
       );
 
-      setAccessToken(response.accessToken);
+      const json = await response.json();
 
+      if (!response.ok) {
+        throw new ApiError(response.status, json, "Failed to refresh token");
+      }
+
+      const { accessToken } = json;
+      setAccessToken(accessToken as string);
       console.log("token send successful");
+
+      return accessToken as string;
     } catch (error) {
       console.error("Login failed: ", error);
       setAccessToken(null);
@@ -25,7 +38,9 @@ export function useAuth() {
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetchApi<UserResponse>("/auth/check-auth");
+      const response = await fetchApi<UserResponse>("/auth/check-auth", {
+        navigate,
+      });
       const user = UserResponseSchema.parse(response);
 
       setUser(user);
@@ -36,13 +51,14 @@ export function useAuth() {
       console.error("Check auth failed : ", error);
       setIsAuthenticated(false);
     }
-  }, [setUser, setIsAuthenticated]);
+  }, [setUser, setIsAuthenticated, navigate]);
 
   const login = useCallback(
     async (email: string, password: string) => {
       try {
         const response = await fetchApi<UserResponse>("/auth/login", {
           payload: { email, password },
+          navigate,
         });
 
         const user = UserResponseSchema.parse(response);
@@ -57,12 +73,12 @@ export function useAuth() {
         setUser(null);
       }
     },
-    [setUser, setIsAuthenticated]
+    [setUser, setIsAuthenticated, navigate]
   );
 
   const logout = useCallback(async () => {
     try {
-      await fetchApi<string>("/auth/logout");
+      await fetchApi<string>("/auth/logout", { navigate });
 
       clearAuth();
 
@@ -70,7 +86,7 @@ export function useAuth() {
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  }, [clearAuth]);
+  }, [clearAuth, navigate]);
 
   return {
     login,
