@@ -9,13 +9,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@layout/*": ["./src/components/layout/*"],
       "@hooks/*": ["./src/hooks/*"],
+      "@layout/*": ["./src/components/layout/*"],
       "@ui/*": ["./src/components/ui/*"],
       "@pages/*": ["./src/pages/*"],
       "@server/*": ["../server/src/*"],
-      "@schema/*": ["../server/src/schema/*"],
+      "@schema/*": ["../server/src/schema/*"]
     }
   }
 }
