@@ -58,7 +58,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
     const salt = await bcrypt.genSalt(Number(SALT_ROUNDS));
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         email,
@@ -66,7 +66,12 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
       },
     });
 
-    return apiReponse.success(res, "Created", user);
+    return apiReponse.success(res, "Created", {
+      id: user.id,
+      username: user.username,
+      email,
+      role: user.role,
+    });
   } catch (error) {
     return apiReponse.error(res, "Internal Server Error", error);
   }

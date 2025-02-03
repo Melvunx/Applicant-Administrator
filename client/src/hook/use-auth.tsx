@@ -40,6 +40,7 @@ export function useAuth() {
     try {
       const response = await fetchApi<UserResponse>("/auth/check-auth", {
         navigate,
+        requiresToken: true,
       });
       const user = UserResponseSchema.parse(response);
 
@@ -52,6 +53,22 @@ export function useAuth() {
       setIsAuthenticated(false);
     }
   }, [setUser, setIsAuthenticated, navigate]);
+
+  const register = useCallback(
+    async (username: string, email: string, password: string) => {
+      try {
+        const r = await fetchApi<UserResponse>("/auth/register", {
+          payload: { username, email, password },
+        });
+        const user = UserResponseSchema.parse(r);
+        setUser(user);
+      } catch (error) {
+        setUser(null);
+        console.error("Check auth failed : ", error);
+      }
+    },
+    [setUser]
+  );
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -78,7 +95,7 @@ export function useAuth() {
 
   const logout = useCallback(async () => {
     try {
-      await fetchApi<string>("/auth/logout", { navigate });
+      await fetchApi<string>("/auth/logout", { navigate, requiresToken: true });
 
       clearAuth();
 
@@ -89,6 +106,7 @@ export function useAuth() {
   }, [clearAuth, navigate]);
 
   return {
+    register,
     login,
     logout,
     checkAuth,
