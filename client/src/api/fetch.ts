@@ -1,21 +1,56 @@
-import { useAuth } from "@/hook/use-auth";
-import userAuthStore from "./auth";
+const refreshToken = async (): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/refresh-token",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-const { refreshToken } = useAuth();
-const { accessToken, setAccessToken } = userAuthStore();
+    if (!response.ok) {
+      throw new ApiError(
+        response.status,
+        await response.json(),
+        "Failed to refresh token"
+      );
+    }
+
+    const { accessToken } = await response.json();
+    return accessToken;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
 
 export class ApiError extends Error {
   constructor(
     public status: number,
-    public data: Record<string, unknown>,
+    public data: {
+      success: false;
+      message: string;
+      error: Error | string;
+      stack?: string;
+    },
     message?: string
   ) {
-    super(message || `API request failed with status ${status}`);
-    this.name = "ApiError";
+    super(message || data.message);
+    this.name = `Api error whith status ${status}`;
+
+    if (data.error) {
+      this.message += `\nError details: ${JSON.stringify(data.error, null, 2)}`;
+    }
+
+    // if (data.stack) {
+    //   this.stack = data.stack;
+    // }
   }
 }
-
 const fetchApi = async <T>(
   url: string,
   {
@@ -24,12 +59,16 @@ const fetchApi = async <T>(
     headers = {},
     navigate,
     requiresToken = false,
+    accessToken,
+    setAccessToken,
   }: {
     payload?: Record<string, unknown>;
     method?: string;
     headers?: Record<string, string>;
     navigate?: (path: string) => void;
     requiresToken?: boolean;
+    accessToken?: string | null;
+    setAccessToken?: (token: string | null) => void;
   } = {}
 ): Promise<T> => {
   method = method || (payload ? "POST" : "GET");
@@ -56,12 +95,12 @@ const fetchApi = async <T>(
       const newAccessToken = await refreshToken();
 
       if (!newAccessToken) {
-        setAccessToken(null);
+        if (setAccessToken) setAccessToken(null);
         if (navigate) navigate("/auth");
         throw new ApiError(r.status, await r.json(), "Failed to refresh token");
       }
 
-      setAccessToken(newAccessToken);
+      if (setAccessToken) setAccessToken(newAccessToken);
 
       requestOptions.headers = {
         ...requestOptions.headers,
@@ -70,7 +109,7 @@ const fetchApi = async <T>(
 
       r = await fetch(`http://localhost:5000/api${url}`, requestOptions);
     } catch (error) {
-      setAccessToken(null);
+      if (setAccessToken) setAccessToken(null);
       if (navigate) navigate("/auth");
       throw error;
     }
@@ -82,7 +121,7 @@ const fetchApi = async <T>(
     throw new ApiError(r.status, json);
   }
 
-  console.log("The json after fetching : ", json);
+  console.log("The json after fetching ", json);
 
   return json.success && json.data ? (json.data as T) : (json.message as T);
 };

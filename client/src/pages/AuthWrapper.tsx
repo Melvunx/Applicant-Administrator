@@ -1,16 +1,33 @@
 import userAuthStore from "@/api/auth";
+import useAuth from "@/hook/use-auth";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 export default function AuthWrapper() {
   const { isAuthenticated } = userAuthStore();
+  const { checkAuth } = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isAuthenticated !== null) {
-      setLoading(false);
-    }
-  }, [isAuthenticated]);
+    let isMounted = true;
+
+    const verifyAuth = async () => {
+      try {
+        await checkAuth();
+      } catch (error) {
+        console.error("Failed to check authentication:", error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    verifyAuth();
+    return () => {
+      isMounted = false;
+    };
+  }, [checkAuth, isAuthenticated]);
 
   if (loading) {
     return <div>Loading...</div>;

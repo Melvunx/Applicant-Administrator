@@ -165,6 +165,7 @@ export const updateOffer: RequestHandler<
         applyDate,
       },
     });
+    
     return apiReponse.success(res, "Ok", offer);
   } catch (error) {
     return apiReponse.error(res, "Internal Server Error", error);

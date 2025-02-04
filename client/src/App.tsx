@@ -8,11 +8,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <AuthWrapper />,
+    errorElement: <Error />,
     children: [
       {
         path: "dashboard",
         element: <Home />,
-        errorElement: <Error />,
       },
     ],
   },

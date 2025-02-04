@@ -7,9 +7,9 @@ const bodyParser = require("body-parser");
 
 const { PORT } = process.env;
 
-if (!PORT) {
-  throw new Error("Port number not found");
-}
+// if (!PORT) {
+//   throw new Error("Port number not found");
+// }
 
 const app = express();
 

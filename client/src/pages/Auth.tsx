@@ -1,6 +1,11 @@
+import Login from "@/components/Login";
+import Register from "@/components/Register";
+import { ToggleMode } from "@/components/toggle-mode";
+
 export default function Auth() {
   return (
-    <div className="flex justify-center mx-auto w-1/2">
+    <div className="flex flex-col items-center justify-center mx-auto w-1/2">
+      <ToggleMode />
       <div className="card card-dash bg-base-100 w-96">
         <div className="card-body">
           <div role="tablist" className="tabs tabs-border">
@@ -13,7 +18,7 @@ export default function Auth() {
               defaultChecked
             />
             <div className="tab-content border-base-300 bg-base-100 p-10">
-              Tab content 1
+              <Login />
             </div>
 
             <input
@@ -24,7 +29,7 @@ export default function Auth() {
               aria-label="Register"
             />
             <div className="tab-content border-base-300 bg-base-100 p-10">
-              Tab content 2
+              <Register />
             </div>
           </div>
         </div>

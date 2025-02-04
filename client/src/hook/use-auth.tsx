@@ -4,43 +4,24 @@ import { UserResponse, UserResponseSchema } from "@/schema/user.schema";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function useAuth() {
+export default function useAuth() {
   const navigate = useNavigate();
-  const { setUser, setIsAuthenticated, setAccessToken, clearAuth } =
-    userAuthStore();
-
-  const refreshToken = useCallback(async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:3000/api/auth/refresh-token",
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
-
-      const json = await response.json();
-
-      if (!response.ok) {
-        throw new ApiError(response.status, json, "Failed to refresh token");
-      }
-
-      const { accessToken } = json;
-      setAccessToken(accessToken as string);
-      console.log("token send successful");
-
-      return accessToken as string;
-    } catch (error) {
-      console.error("Login failed: ", error);
-      setAccessToken(null);
-    }
-  }, [setAccessToken]);
+  const {
+    setAuthError,
+    setUser,
+    setIsAuthenticated,
+    clearAuth,
+    accessToken,
+    setAccessToken,
+  } = userAuthStore();
 
   const checkAuth = useCallback(async () => {
     try {
       const response = await fetchApi<UserResponse>("/auth/check-auth", {
         navigate,
         requiresToken: true,
+        accessToken,
+        setAccessToken,
       });
       const user = UserResponseSchema.parse(response);
 
@@ -52,7 +33,7 @@ export function useAuth() {
       console.error("Check auth failed : ", error);
       setIsAuthenticated(false);
     }
-  }, [setUser, setIsAuthenticated, navigate]);
+  }, [setUser, setIsAuthenticated, navigate, accessToken, setAccessToken]);
 
   const register = useCallback(
     async (username: string, email: string, password: string) => {
@@ -82,34 +63,44 @@ export function useAuth() {
 
         setUser(user);
         setIsAuthenticated(true);
+        setAuthError(null);
 
         console.log("Login successful");
       } catch (error) {
-        console.error("Login failed:", error);
+        if (error instanceof ApiError) {
+          setAuthError(error.data.error as string);
+        }
+
+        console.error(error);
         setIsAuthenticated(false);
         setUser(null);
       }
     },
-    [setUser, setIsAuthenticated, navigate]
+    [navigate, setUser, setIsAuthenticated, setAuthError]
   );
 
   const logout = useCallback(async () => {
     try {
-      await fetchApi<string>("/auth/logout", { navigate, requiresToken: true });
+      await fetchApi<string>("/auth/logout", {
+        method: "POST",
+        navigate,
+        requiresToken: true,
+        accessToken,
+        setAccessToken,
+      });
 
       clearAuth();
 
       console.log("Logout successful");
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error(error);
     }
-  }, [clearAuth, navigate]);
+  }, [accessToken, clearAuth, navigate, setAccessToken]);
 
   return {
     register,
     login,
     logout,
     checkAuth,
-    refreshToken,
   };
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const Role = z.enum(["USER", "ADMIN"]);
+export const Role = z.enum(["USER", "ADMIN"]);
 
 export const UserResponseSchema = z.object({
   id: z.string(),

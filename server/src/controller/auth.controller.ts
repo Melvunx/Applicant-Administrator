@@ -4,6 +4,7 @@ import {
   verifyToken,
 } from "@/config/jsonwebtoken";
 import { prisma } from "@/config/prisma";
+import colors from "@/schema/colors.schema";
 import { UserCookie } from "@/schema/user.schema";
 import { Session, User } from "@prisma/client";
 import apiReponse from "@services/api.services";
@@ -13,7 +14,7 @@ import { RequestHandler } from "express";
 const { SALT_ROUNDS } = process.env;
 
 if (!SALT_ROUNDS) {
-  throw new Error("Port number not found");
+  throw new Error("Salt round not found");
 }
 
 export const register: RequestHandler<{}, {}, User> = async (req, res) => {
@@ -66,6 +67,8 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
       },
     });
 
+    console.log(colors.success(`New user ${user.username} created`));
+
     return apiReponse.success(res, "Created", {
       id: user.id,
       username: user.username,
@@ -102,7 +105,7 @@ export const login: RequestHandler<
     });
 
     if (!user)
-      return apiReponse.error(res, "Bad Request", new Error("Email invalid"));
+      return apiReponse.error(res, "Bad Request", new Error("Invalid email"));
 
     const isMatch = await bcrypt.compare(password, user.password);
 
@@ -110,7 +113,7 @@ export const login: RequestHandler<
       return apiReponse.error(
         res,
         "Bad Request",
-        new Error("Password not match")
+        new Error("Invalid password")
       );
 
     session = await prisma.session.findFirst({
@@ -159,6 +162,8 @@ export const login: RequestHandler<
       }
     );
 
+    console.log(colors.success(`User ${user.username} logged in successfully`));
+
     return apiReponse.success(
       res,
       "Ok",
@@ -166,6 +171,7 @@ export const login: RequestHandler<
       `User ${user.username} logged in successfully`
     );
   } catch (error) {
+    console.error(colors.error("Error logging in user (server) : ", error));
     return apiReponse.error(res, "Internal Server Error", error);
   }
 };
