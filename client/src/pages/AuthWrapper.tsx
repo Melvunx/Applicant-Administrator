@@ -15,7 +15,7 @@ export default function AuthWrapper() {
       try {
         await checkAuth();
       } catch (error) {
-        console.error("Failed to check authentication:", error);
+        console.error("Failed to check authentication : ", error);
       } finally {
         if (isMounted) {
           setLoading(false);

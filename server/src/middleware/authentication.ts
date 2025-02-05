@@ -11,19 +11,23 @@ const checkAuth: RequestHandler = async (req, res, next) => {
 
   console.log(colors.info("Authentication in progress..."));
 
-  if (!user || !token)
+  if (!user || !token) {
+    console.log(colors.error("Authentication failed: No user or token found."));
     return apiReponse.error(
       res,
       "Unauthorized",
       new Error("Token or User not found")
     );
+  }
 
   const decoded = await verifyToken<{ userId: string }>(token);
-  if (!decoded)
+  if (!decoded) {
+    console.log(colors.error("Authentication failed: Token is invalid."));
     return apiReponse.error(res, "Forbidden", new Error("Invalid token"));
+  }
 
   if (process.env.NODE_ENV !== "production") {
-    console.log(colors.info(`User ${user.username} is authenticated`));
+    console.log(colors.success(`User ${user.username} is authenticated`));
   }
 
   next();

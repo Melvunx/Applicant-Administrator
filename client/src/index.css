@@ -37,3 +37,6 @@
   --depth: 0;
   --noise: 0;
 }
+
+@variant light (&:where([data-theme=silk], [data-theme=silk] *));
+@variant dark (&:where([data-theme=forest], [data-theme=forest] *));
