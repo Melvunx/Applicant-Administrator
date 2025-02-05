@@ -18,4 +18,6 @@ export const OfferSchema = z.object({
   userId: z.string().cuid(),
 });
 
+export const OffersSchema = z.array(OfferSchema);
+
 export type Offer = z.infer<typeof OfferSchema>;

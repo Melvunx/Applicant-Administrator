@@ -22,9 +22,7 @@ export const getAllOffers: RequestHandler = async (_, res) => {
   try {
     const offers = await prisma.offer.findMany();
 
-    const isNotEmptyOffers = isArrayOrIsEmpty(offers);
-
-    return apiReponse.success(res, "Ok", isNotEmptyOffers ? offers : null);
+    return apiReponse.success(res, "Ok", offers);
   } catch (error) {
     return apiReponse.error(res, "Internal Server Error", error);
   }
@@ -165,7 +163,7 @@ export const updateOffer: RequestHandler<
         applyDate,
       },
     });
-    
+
     return apiReponse.success(res, "Ok", offer);
   } catch (error) {
     return apiReponse.error(res, "Internal Server Error", error);

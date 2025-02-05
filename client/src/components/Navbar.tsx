@@ -35,7 +35,9 @@ export default function Navbar() {
           onMouseLeave={() => setIsHoveringLogo(false)}
           to="/dashboard"
           className={`btn btn-ghost normal-case text-xl italic ${
-            isHoveringLogo ? "text-primary" : ""
+            isHoveringLogo
+              ? "dark:text-primary light:text-secondary-content"
+              : ""
           }`}
         >
           Melvunx Offer' s
@@ -69,8 +71,8 @@ export default function Navbar() {
               onMouseLeave={() => setIsHoveringProfile(false)}
             >
               <Link
-                className={`tracking-wide ${
-                  isHoveringProfile ? "text-secondary" : ""
+                className={`tracking-wide font-semibold ${
+                  isHoveringProfile ? "text-secondary " : ""
                 }`}
                 to="/profile"
               >
@@ -86,7 +88,7 @@ export default function Navbar() {
                 }}
               >
                 <span
-                  className={`flex gap-2 items-center text-error ${
+                  className={`flex gap-2 items-center text-error font-semibold ${
                     isLoading ? "loading loading-spinner" : ""
                   }`}
                 >

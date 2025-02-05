@@ -17,7 +17,7 @@ router.get("/", authenticate, getAllOffers);
 
 router.get("/offer", authenticate, getSerachedOffer);
 
-router.get("/:offerId", getOfferById);
+router.get("/offer/:offerId", getOfferById);
 
 // Create new offer
 router.post("/new", authenticate, createOffer);
