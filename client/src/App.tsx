@@ -1,6 +1,6 @@
+import Error from "@/pages/ErrorPage";
 import Auth from "@pages/Auth";
 import AuthWrapper from "@pages/AuthWrapper";
-import Error from "@pages/Error";
 import Home from "@pages/Home";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Profile from "./pages/Profile";

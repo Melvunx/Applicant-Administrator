@@ -54,7 +54,7 @@ export default function Register() {
     <>
       <form
         action={onRegisterAction}
-        className="flex flex-col items-center justify-center gap-3"
+        className="flex flex-col items-center justify-center gap-5"
       >
         <Input
           labelName="user"

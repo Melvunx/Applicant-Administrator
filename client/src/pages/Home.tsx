@@ -3,7 +3,7 @@ import Offers from "@/components/Offers";
 
 export default function Home() {
   return (
-    <div>
+    <div className="font-logo">
       <Navbar />
       <Offers />
     </div>

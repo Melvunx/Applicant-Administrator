@@ -1,5 +1,5 @@
-import userAuthStore from "@/api/auth";
 import Navbar from "@/components/Navbar";
+import userAuthStore from "@/stores/auth";
 
 export default function Profile() {
   const { user } = userAuthStore();

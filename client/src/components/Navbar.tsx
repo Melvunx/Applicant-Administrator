@@ -1,17 +1,48 @@
+import { searchOffers } from "@/api/offer";
 import useAuth from "@/hook/use-auth";
+import ErrorPage from "@/pages/ErrorPage";
+import userAuthStore from "@/stores/auth";
+import { useMutation } from "@tanstack/react-query";
 import { AlignJustifyIcon, SearchIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import OfferForm from "./OfferForm";
 import { ToggleMode } from "./toggle-mode";
 
 export default function Navbar() {
   const { logout } = useAuth();
+  const navigate = useNavigate();
+  const { user, accessToken, setAccessToken } = userAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHoveringLogo, setIsHoveringLogo] = useState(false);
   const [isHoveringProfile, setIsHoveringProfile] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const {
+    mutate: searchMutation,
+    isPending: isSearching,
+    isError,
+    error,
+  } = useMutation({
+    mutationKey: ["search"],
+    mutationFn: async (query: string) =>
+      await searchOffers({ query, navigate, accessToken, setAccessToken }),
+    onSuccess: (data, variables) =>
+      console.log("Data receive and send : ", { data, variables }),
+    onError: (error) => console.error("Error: ", error),
+  });
+
+  const onSearchAction = (data: FormData) => {
+    const query = String(data.get("search"));
+
+    try {
+      searchMutation(query);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -27,9 +58,16 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  if (!user || isError) {
+    return <ErrorPage />;
+  }
+
+  if (error) {
+    throw error;
+  }
   return (
     <div className="navbar bg-base-100 shadow-md">
-      <div className="flex-1">
+      <div className="flex w-full items-center gap-4">
         <Link
           onMouseEnter={() => setIsHoveringLogo(true)}
           onMouseLeave={() => setIsHoveringLogo(false)}
@@ -42,12 +80,18 @@ export default function Navbar() {
         >
           Melvunx Offer' s
         </Link>
+        <OfferForm />
       </div>
       <div className="flex items-center gap-3">
         <ToggleMode />
-        <form>
+        <form action={onSearchAction}>
           <label className="input">
-            <SearchIcon size={18} strokeWidth={0.9} />
+            {isSearching ? (
+              <span className="loading loading-spinner light:text-primary dark:text-info"></span>
+            ) : (
+              <SearchIcon size={18} strokeWidth={0.9} />
+            )}
+
             <input
               ref={inputRef}
               type="search"
@@ -76,7 +120,7 @@ export default function Navbar() {
                 }`}
                 to="/profile"
               >
-                Profile
+                {user.username} Profile
               </Link>
             </li>
             <li>

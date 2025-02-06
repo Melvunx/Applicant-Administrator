@@ -23,10 +23,10 @@ router.get("/offer/:offerId", getOfferById);
 router.post("/new", authenticate, createOffer);
 
 // Modify offer
-router.put("/update", authenticate, updateOffer);
+router.put("/offer/:offerId", authenticate, updateOffer);
 
 // Delete offer
-router.delete("/", authenticate, deleteOffer);
+router.delete("/offer/:offerId", authenticate, deleteOffer);
 
 router.delete("/many", authenticate, deleteManyOffers);
 

@@ -1,6 +1,6 @@
-import userAuthStore from "@/api/auth";
 import fetchApi, { ApiError } from "@/api/fetch";
 import { UserResponse, UserResponseSchema } from "@/schema/user.schema";
+import userAuthStore from "@/stores/auth";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 

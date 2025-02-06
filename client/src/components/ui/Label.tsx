@@ -8,6 +8,9 @@ type LabelProps = {
   className?: string;
   type?: InputType;
   placeholder?: string;
+  disabled?: boolean;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export default function Input({
@@ -16,6 +19,9 @@ export default function Input({
   className,
   type = "text",
   placeholder,
+  disabled,
+  value,
+  onChange,
 }: LabelProps) {
   return (
     <label htmlFor={labelName} className="floating-label">
@@ -25,6 +31,9 @@ export default function Input({
         name={inputName.toLowerCase()}
         className={clsx("input", className)}
         placeholder={placeholder}
+        disabled={disabled}
+        value={value}
+        onChange={onChange}
       />
       <span>{inputName}</span>
     </label>

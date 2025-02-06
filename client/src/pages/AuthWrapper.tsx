@@ -1,5 +1,5 @@
-import userAuthStore from "@/api/auth";
 import useAuth from "@/hook/use-auth";
+import userAuthStore from "@/stores/auth";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 

@@ -1,6 +1,6 @@
-import userAuthStore from "@/api/auth";
 import useAuth from "@/hook/use-auth";
 import { LoginUser, LoginUserSchema } from "@/schema/auth.schema";
+import userAuthStore from "@/stores/auth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,9 +27,7 @@ export default function Login() {
       console.log("Data send");
       navigate("/dashboard");
     },
-    onError: (error) => {
-      console.error(error);
-    },
+    onError: (error) => console.error(error),
   });
 
   const onLoginAction = async (data: FormData) => {
@@ -56,7 +54,7 @@ export default function Login() {
   return (
     <form
       action={onLoginAction}
-      className="flex flex-col items-center justify-center gap-3"
+      className="flex flex-col items-center justify-center gap-5"
     >
       <Input
         labelName="email"

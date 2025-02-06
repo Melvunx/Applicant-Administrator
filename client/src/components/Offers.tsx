@@ -1,6 +1,6 @@
-import userAuthStore from "@/api/auth";
 import { getOffers } from "@/api/offer";
-import Error from "@/pages/Error";
+import Error from "@/pages/ErrorPage";
+import userAuthStore from "@/stores/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import OfferCard from "./OfferCard";

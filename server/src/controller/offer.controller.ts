@@ -1,3 +1,4 @@
+import colors from "@/schema/colors.schema";
 import { UserCookie } from "@/schema/user.schema";
 import { prisma } from "@config/prisma";
 import { Offer } from "@prisma/client";
@@ -20,7 +21,13 @@ function handleError(
 
 export const getAllOffers: RequestHandler = async (_, res) => {
   try {
+    console.log(colors.info("Geting all offers..."));
+
     const offers = await prisma.offer.findMany();
+
+    offers.length > 0
+      ? console.log(colors.success("Offers found : ", offers.length))
+      : console.log(colors.error("No offers found"));
 
     return apiReponse.success(res, "Ok", offers);
   } catch (error) {
@@ -34,9 +41,13 @@ export const getOfferById: RequestHandler = async (req, res) => {
 
     if (!offerId) return handleError(res, "Not Found", "Id not found");
 
+    console.log(colors.info("Geting offer..."));
+
     const offer = await prisma.offer.findUnique({ where: { id: offerId } });
 
     if (!offer) return handleError(res, "Not Found", "Offer not found");
+
+    console.log(colors.info("Offer get successfully"));
 
     return apiReponse.success(res, "Ok", offer);
   } catch (error) {
@@ -53,6 +64,8 @@ export const getSerachedOffer: RequestHandler<
   try {
     const { search } = req.query;
     if (!search) return handleError(res, "Not Found", "Search text not found");
+
+    console.log(colors.info(`Looking for offer like ${search} ...`));
 
     const offers = await prisma.offer.findMany({
       where: {
@@ -73,9 +86,11 @@ export const getSerachedOffer: RequestHandler<
       },
     });
 
-    const isNotEmptyOffers = isArrayOrIsEmpty(offers);
+    offers.length > 0
+      ? console.log(colors.success("Offers found : ", offers.length))
+      : console.log(colors.error("No offers found"));
 
-    return apiReponse.success(res, "Ok", isNotEmptyOffers ? offers : null);
+    return apiReponse.success(res, "Ok", offers);
   } catch (error) {
     return apiReponse.error(res, "Internal Server Error", error);
   }
@@ -101,13 +116,15 @@ export const createOffer: RequestHandler<{}, {}, Offer> = async (req, res) => {
     if (!company || !url || !type || !status || !applyDate)
       return handleError(res, "Not Found", "Missing fields");
 
-    const offer = await prisma.offer.create({
+    console.log(colors.info("Creating new offer..."));
+
+    await prisma.offer.create({
       data: {
         title: title ?? "NULL",
         company,
         url,
         type,
-        expireDate: expireDate ?? "NULL",
+        expireDate: expireDate ?? undefined,
         location: location ?? "NULL",
         status,
         applyDate,
@@ -115,7 +132,9 @@ export const createOffer: RequestHandler<{}, {}, Offer> = async (req, res) => {
       },
     });
 
-    return apiReponse.success(res, "Created", offer);
+    console.log(colors.success("Offer created successfully."));
+
+    return apiReponse.success(res, "Created", { title, type, company });
   } catch (error) {
     return apiReponse.error(res, "Internal Server Error", error);
   }
@@ -147,7 +166,9 @@ export const updateOffer: RequestHandler<
     if (!company || !url || !type || !status || !applyDate)
       return handleError(res, "Not Found", "Missing fields");
 
-    const offer = await prisma.offer.update({
+    console.log(colors.info("Updating offer..."));
+
+    await prisma.offer.update({
       where: {
         id: offerId,
         userId: user.id,
@@ -164,7 +185,9 @@ export const updateOffer: RequestHandler<
       },
     });
 
-    return apiReponse.success(res, "Ok", offer);
+    console.log(colors.success("Offer updated successfully"));
+
+    return apiReponse.success(res, "Ok", { title, type, company });
   } catch (error) {
     return apiReponse.error(res, "Internal Server Error", error);
   }
@@ -176,11 +199,15 @@ export const deleteOffer: RequestHandler = async (req, res) => {
 
     if (!offerId) return handleError(res, "Not Found", "Id not found");
 
+    console.log(colors.info("Deleting offer..."));
+
     await prisma.offer.delete({
       where: {
         id: offerId,
       },
     });
+
+    console.log(colors.success("Offer deleted successfully"));
 
     return apiReponse.success(res, "Ok", null, `Offer ${offerId} deleted`);
   } catch (error) {
@@ -198,6 +225,8 @@ export const deleteManyOffers: RequestHandler<
     if (!isArrayOrIsEmpty(ids))
       return handleError(res, "Not Found", "Ids required");
 
+    console.log(colors.info("Deleting offers..."));
+
     const offers = await prisma.offer.deleteMany({
       where: {
         id: {
@@ -205,6 +234,9 @@ export const deleteManyOffers: RequestHandler<
         },
       },
     });
+
+    console.log(colors.success("Offers deleted successfully"));
+
     return apiReponse.success(
       res,
       "Ok",

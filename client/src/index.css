@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=M+PLUS+Rounded+1c&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Roboto:ital,wght@0,100..900;1,100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 @plugin "daisyui" {
   themes: silk --default, forest --prefersdark;
 }
@@ -36,6 +37,15 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
+}
+
+@theme {
+  --font-ubuntu: "Ubuntu", serif;
+  --font-title: "Montserrat", sans-serif;
+  --font-content-roboto: "Roboto", sans-serif;
+  --font-content-nunito: "Nunito", sans-serif;
+  --font-logo: "Caveat", cursive;
+  --font-content-m-plus: "M PLUS Rounded 1c", sans-serif;
 }
 
 @variant light (&:where([data-theme=silk], [data-theme=silk] *));

@@ -4,7 +4,7 @@ import { ToggleMode } from "@/components/toggle-mode";
 
 export default function Auth() {
   return (
-    <div className="flex flex-col items-center justify-center mx-auto w-1/2">
+    <div className="flex flex-col items-center justify-center gap-10 min-h-screen mx-auto w-1/2">
       <ToggleMode />
       <div className="card card-dash bg-base-100 w-96">
         <div className="card-body">
@@ -13,11 +13,11 @@ export default function Auth() {
               type="radio"
               name="auth"
               role="tab"
-              className="tab"
+              className="tab w-f"
               aria-label="Login"
               defaultChecked
             />
-            <div className="tab-content border-base-300 bg-base-100 p-10">
+            <div className="tab-content border-base-300 bg-base-100 rounded-lg p-14">
               <Login />
             </div>
 
