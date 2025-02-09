@@ -2,7 +2,7 @@ import { createOffer } from "@/api/offer";
 import ErrorPage from "@/pages/ErrorPage";
 import { OfferResponseData } from "@/schema/offer.schema";
 import userAuthStore from "@/stores/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ export default function OfferForm() {
   const [titre, setTitre] = useState("");
   const navigate = useNavigate();
   const { accessToken, setAccessToken, user } = userAuthStore();
+  const queryClient = useQueryClient();
 
   const openModal = () => {
     const modalForm = document.getElementById("modal-form");
@@ -23,6 +24,16 @@ export default function OfferForm() {
     }
 
     modalForm.showModal();
+  };
+
+  const closeModal = () => {
+    const modalForm = document.getElementById("modal-form");
+
+    if (!modalForm) {
+      throw new Error("Modal form not found");
+    }
+
+    modalForm.close();
   };
 
   const {
@@ -36,7 +47,11 @@ export default function OfferForm() {
       await createOffer({ navigate, data, accessToken, setAccessToken }),
     onSuccess: (data, variables) => {
       setTitre("");
+
       console.log("Offer data send to server", { data, variables });
+
+      queryClient.invalidateQueries({ queryKey: ["offers"] });
+      setTimeout(() => closeModal(), 175);
     },
     onError: (error) => {
       console.error(error);
@@ -190,7 +205,7 @@ export default function OfferForm() {
           </fieldset>
 
           <div className="modal-action">
-            <Button type="submit" loading={isCreatingOffer}>
+            <Button id="modal-btn" type="submit" loading={isCreatingOffer}>
               Ajouter
             </Button>
           </div>

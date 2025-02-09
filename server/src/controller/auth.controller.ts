@@ -7,7 +7,7 @@ import { prisma } from "@/config/prisma";
 import colors from "@/schema/colors.schema";
 import { UserCookie } from "@/schema/user.schema";
 import { Session, User } from "@prisma/client";
-import apiReponse from "@services/api.services";
+import apiResponse from "@services/api.services";
 import bcrypt from "bcrypt";
 import { RequestHandler } from "express";
 
@@ -22,7 +22,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password)
-      return apiReponse.error(
+      return apiResponse.error(
         res,
         "Not Found",
         new Error("Missing credentials")
@@ -37,7 +37,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
     });
 
     if (existUser)
-      return apiReponse.error(
+      return apiResponse.error(
         res,
         "Bad Request",
         new Error("Email already exists")
@@ -50,7 +50,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
     });
 
     if (existUser)
-      return apiReponse.error(
+      return apiResponse.error(
         res,
         "Bad Request",
         new Error("Username already exists")
@@ -69,14 +69,14 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
 
     console.log(colors.success(`New user ${user.username} created`));
 
-    return apiReponse.success(res, "Created", {
+    return apiResponse.success(res, "Created", {
       id: user.id,
       username: user.username,
       email,
       role: user.role,
     });
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -92,7 +92,7 @@ export const login: RequestHandler<
     let session: Session | null = null;
 
     if (!email || !password)
-      return apiReponse.error(
+      return apiResponse.error(
         res,
         "Not Found",
         new Error("Missing credentials")
@@ -105,12 +105,12 @@ export const login: RequestHandler<
     });
 
     if (!user)
-      return apiReponse.error(res, "Bad Request", new Error("Invalid email"));
+      return apiResponse.error(res, "Bad Request", new Error("Invalid email"));
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch)
-      return apiReponse.error(
+      return apiResponse.error(
         res,
         "Bad Request",
         new Error("Invalid password")
@@ -164,7 +164,7 @@ export const login: RequestHandler<
 
     console.log(colors.success(`User ${user.username} logged in successfully`));
 
-    return apiReponse.success(
+    return apiResponse.success(
       res,
       "Ok",
       { id: user.id, username: user.username, email, role: user.role },
@@ -172,7 +172,7 @@ export const login: RequestHandler<
     );
   } catch (error) {
     console.error(colors.error("Error logging in user (server) : ", error));
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -181,18 +181,18 @@ export const refreshToken: RequestHandler = async (req, res) => {
     const token: string | undefined = req.cookies.refreshJwt;
 
     if (!token)
-      return apiReponse.error(res, "Not Found", new Error("Token not found"));
+      return apiResponse.error(res, "Not Found", new Error("Token not found"));
 
     const decoded = await verifyToken<{ userId: string }>(token);
 
     if (!decoded)
-      return apiReponse.error(res, "Forbidden", new Error("Invalid token"));
+      return apiResponse.error(res, "Forbidden", new Error("Invalid token"));
 
     const newAccessToken = generateAccessToken(decoded.userId);
 
-    return apiReponse.success(res, "Created", { accessToken: newAccessToken });
+    return apiResponse.success(res, "Created", { accessToken: newAccessToken });
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -201,15 +201,15 @@ export const auth: RequestHandler = async (req, res) => {
     const user: UserCookie | undefined = req.cookies["info"];
 
     if (!user)
-      return apiReponse.error(
+      return apiResponse.error(
         res,
         "Unauthorized",
         new Error("Token or User not found")
       );
 
-    return apiReponse.success(res, "Ok", user, "User is authenticated");
+    return apiResponse.success(res, "Ok", user, "User is authenticated");
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -219,7 +219,7 @@ export const logout: RequestHandler = async (req, res) => {
     const user: UserCookie | undefined = req.cookies["info"];
 
     if (!token || !user)
-      return apiReponse.error(
+      return apiResponse.error(
         res,
         "Not Found",
         new Error("Session or User not found")
@@ -240,15 +240,15 @@ export const logout: RequestHandler = async (req, res) => {
     res.clearCookie("refreshJwt");
     res.clearCookie("info");
 
-    return apiReponse.success(res, "Ok", null, "User logged out successfully");
+    return apiResponse.success(res, "Ok", null, "User logged out successfully");
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
 export const getUsers: RequestHandler = async (req, res) => {
   try {
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };

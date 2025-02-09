@@ -60,6 +60,6 @@ class ApiResponse {
   }
 }
 
-const apiReponse = new ApiResponse();
+const apiResponse = new ApiResponse();
 
-export default apiReponse;
+export default apiResponse;

@@ -46,11 +46,12 @@ export class ApiError extends Error {
       this.message += `\nError details: ${JSON.stringify(data.error, null, 2)}`;
     }
 
-    // if (data.stack) {
-    //   this.stack = data.stack;
-    // }
+    if (data.stack) {
+      this.stack = data.stack;
+    }
   }
 }
+
 const fetchApi = async <T>(
   url: string,
   {

@@ -25,6 +25,7 @@ type LoadingVariant =
 
 type ButtonProps = {
   children?: ReactNode;
+  id?: string;
   onClick?: () => void;
   className?: string;
   variant?: ButtonVariant;
@@ -37,6 +38,7 @@ type ButtonProps = {
 
 export default function Button({
   children,
+  id,
   onClick,
   className,
   variant = "btn-neutral",
@@ -48,6 +50,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
+      id={id}
       type={type}
       onClick={onClick}
       disabled={disabled}

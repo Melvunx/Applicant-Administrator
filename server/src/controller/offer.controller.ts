@@ -2,7 +2,7 @@ import colors from "@/schema/colors.schema";
 import { UserCookie } from "@/schema/user.schema";
 import { prisma } from "@config/prisma";
 import { Offer } from "@prisma/client";
-import apiReponse from "@services/api.services";
+import apiResponse from "@services/api.services";
 import isArrayOrIsEmpty from "@utils/isArrayOrIsEmpty";
 import { RequestHandler, Response } from "express";
 
@@ -16,22 +16,29 @@ function handleError(
     | "Forbidden",
   message: string
 ) {
-  return apiReponse.error(response, status, new Error(message));
+  return apiResponse.error(response, status, new Error(message));
 }
 
-export const getAllOffers: RequestHandler = async (_, res) => {
+export const getAllOffers: RequestHandler = async (req, res) => {
   try {
+    const user: UserCookie | undefined = req.cookies["info"];
+    if (!user) return handleError(res, "Unauthorized", "User not found");
+
     console.log(colors.info("Geting all offers..."));
 
-    const offers = await prisma.offer.findMany();
+    const offers = await prisma.offer.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
 
     offers.length > 0
       ? console.log(colors.success("Offers found : ", offers.length))
       : console.log(colors.error("No offers found"));
 
-    return apiReponse.success(res, "Ok", offers);
+    return apiResponse.success(res, "Ok", offers);
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -49,9 +56,9 @@ export const getOfferById: RequestHandler = async (req, res) => {
 
     console.log(colors.info("Offer get successfully"));
 
-    return apiReponse.success(res, "Ok", offer);
+    return apiResponse.success(res, "Ok", offer);
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -90,9 +97,9 @@ export const getSerachedOffer: RequestHandler<
       ? console.log(colors.success("Offers found : ", offers.length))
       : console.log(colors.error("No offers found"));
 
-    return apiReponse.success(res, "Ok", offers);
+    return apiResponse.success(res, "Ok", offers);
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -134,9 +141,9 @@ export const createOffer: RequestHandler<{}, {}, Offer> = async (req, res) => {
 
     console.log(colors.success("Offer created successfully."));
 
-    return apiReponse.success(res, "Created", { title, type, company });
+    return apiResponse.success(res, "Created", { title, type, company });
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -187,9 +194,9 @@ export const updateOffer: RequestHandler<
 
     console.log(colors.success("Offer updated successfully"));
 
-    return apiReponse.success(res, "Ok", { title, type, company });
+    return apiResponse.success(res, "Ok", { title, type, company });
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -209,9 +216,9 @@ export const deleteOffer: RequestHandler = async (req, res) => {
 
     console.log(colors.success("Offer deleted successfully"));
 
-    return apiReponse.success(res, "Ok", null, `Offer ${offerId} deleted`);
+    return apiResponse.success(res, "Ok", null, `Offer ${offerId} deleted`);
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
 
@@ -237,13 +244,13 @@ export const deleteManyOffers: RequestHandler<
 
     console.log(colors.success("Offers deleted successfully"));
 
-    return apiReponse.success(
+    return apiResponse.success(
       res,
       "Ok",
       null,
       `Number of deleted offer : ${offers.count}`
     );
   } catch (error) {
-    return apiReponse.error(res, "Internal Server Error", error);
+    return apiResponse.error(res, "Internal Server Error", error);
   }
 };
